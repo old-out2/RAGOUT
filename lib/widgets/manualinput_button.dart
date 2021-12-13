@@ -1,7 +1,8 @@
 import 'package:app/importer.dart';
+import 'package:app/screens/manualinput_screen.dart';
 
-class GrowthButton extends StatelessWidget {
-  const GrowthButton({
+class ManualInputButton extends StatelessWidget {
+  const ManualInputButton({
     Key? key,
   }) : super(key: key);
 
@@ -12,11 +13,11 @@ class GrowthButton extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const GrowthScreen()),
+            MaterialPageRoute(builder: (context) => const ManualInputScreen()),
           );
         },
         child: Image.asset(
-          'assets/growth.png',
+          'assets/manualinput.png',
         ),
       ),
     );
