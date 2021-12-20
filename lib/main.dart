@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/home.png'),
+              image: AssetImage('assets/bgimage_home.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -76,6 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
               //     ),
               //   ),
               // ),
+              // 白い背景：#F2F2F2
+              // クリーム入り背景：#FFF1BC
               Row(
                 children: [
                   const GrowthButton(),

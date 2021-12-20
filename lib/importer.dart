@@ -16,3 +16,6 @@ export 'screens/growth_screen.dart';
 export 'screens/trophy_screen.dart';
 
 // ステータス
+export 'package:fl_chart/fl_chart.dart';
+export 'package:app/widgets/dressup_button.dart';
+export 'dart:math';
