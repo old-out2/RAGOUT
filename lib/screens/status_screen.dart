@@ -1,7 +1,7 @@
 import 'package:app/importer.dart';
 
 class StatusScreen extends StatefulWidget {
-  StatusScreen({Key? key}) : super(key: key);
+  const StatusScreen({Key? key}) : super(key: key);
 
   @override
   _StatusScreenState createState() => _StatusScreenState();

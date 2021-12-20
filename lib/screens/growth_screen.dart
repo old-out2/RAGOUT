@@ -25,8 +25,11 @@ class _GrowthScreenState extends State<GrowthScreen> {
     controller!.resumeCamera();
   }
 
+  var size = SizeConfig();
   @override
   Widget build(BuildContext context) {
+    size.init(context);
+
     return Scaffold(
         appBar: AppBar(
           // AppBarを隠す
@@ -43,12 +46,13 @@ class _GrowthScreenState extends State<GrowthScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          padding: const EdgeInsets.only(top: 50),
+          padding: EdgeInsets.only(top: size.deviceHeight * 0.15),
           child: Column(
             children: <Widget>[
               ConstrainedBox(
-                  constraints:
-                      const BoxConstraints(maxWidth: 300, maxHeight: 500),
+                  constraints: BoxConstraints(
+                      maxWidth: size.deviceWidth * 0.7,
+                      maxHeight: (size.deviceHeight) * 0.6),
                   child: _buildQrView(context)),
               const ManualInputButton()
             ],
@@ -57,6 +61,7 @@ class _GrowthScreenState extends State<GrowthScreen> {
   }
 
   Widget _buildQrView(BuildContext context) {
+    size.init(context);
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     // var scanArea = 200.0;
     // To ensure the Scanner view is properly sizes after rotation
@@ -67,11 +72,11 @@ class _GrowthScreenState extends State<GrowthScreen> {
       overlay: QrScannerOverlayShape(
           borderColor: Colors.red,
           // borderRadius: 30,
-          borderLength: 20,
+          borderLength: size.deviceHeight * 0.02,
           // cutOutBottomOffset: 10,
-          borderWidth: 10,
-          cutOutHeight: 120.0,
-          cutOutWidth: 220.0),
+          borderWidth: size.deviceWidth * 0.02,
+          cutOutHeight: size.deviceHeight * 0.15,
+          cutOutWidth: size.deviceWidth * 0.55),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }

@@ -8,18 +8,26 @@ class ManualInputButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ManualInputScreen()),
-          );
-        },
-        child: Image.asset(
-          'assets/manualinput.png',
-        ),
-      ),
-    );
+    final size = SizeConfig();
+    size.init(context);
+
+    return Container(
+        padding: EdgeInsets.only(top: size.deviceHeight * 0.09),
+        child: SizedBox(
+          height: size.deviceHeight * 0.1,
+          width: size.deviceWidth * 0.5,
+          child: TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ManualInputScreen()),
+              );
+            },
+            child: Image.asset(
+              'assets/manualinput2.png',
+            ),
+          ),
+        ));
   }
 }

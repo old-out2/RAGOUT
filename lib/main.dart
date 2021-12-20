@@ -1,4 +1,6 @@
 import 'package:app/importer.dart';
+import 'package:app/screens/tutorial_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,15 +9,33 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  // void _showTutorial(BuildContext context) async {
+  //   final pref = await SharedPreferences.getInstance();
+
+  //   if (pref.getBool('isAlreadyFirstLaunch') != true) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => const TutorialScreen(),
+  //         fullscreenDialog: true,
+  //       ),
+  //     );
+  //     pref.setBool('isAlreadyFirstLaunch', true);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'RAGOUT',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomeScreen(title: 'RAGOUT'),
-    );
+        title: 'RAGOUT',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        initialRoute: '/',
+        routes: <String, WidgetBuilder>{
+          '/': (context) => const HomeScreen(title: 'RAGOUT'),
+          '/tutorial': (BuildContext context) => const TutorialScreen(),
+        });
   }
 }
 
@@ -29,6 +49,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      var prefs = await SharedPreferences.getInstance();
+      debugPrint("${prefs.getBool('isFirstLaunch')}");
+      if (prefs.getBool('isFirstLaunch') != true) {
+        await Navigator.of(context).pushNamed('/tutorial');
+      }
+    });
+  }
 
   void _incrementCounter() {
     setState(() {
