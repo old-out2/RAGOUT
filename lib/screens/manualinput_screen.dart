@@ -5,7 +5,6 @@ import 'package:app/widgets/manualinput_regist_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class ManualInputScreen extends StatelessWidget {
   const ManualInputScreen({
@@ -15,7 +14,6 @@ class ManualInputScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = SizeConfig();
-    initializeDateFormatting('ja');
     var weekdays = {
       1: "月",
       2: "火",
@@ -25,9 +23,6 @@ class ManualInputScreen extends StatelessWidget {
       6: "土",
       7: "日",
     };
-    // String nowDate2 =
-    //     DateFormat.yMMMMEEEEd('ja').format(DateTime.now()).toString();
-    // String date = nowDate.year.toString() + "年" + nowDate.month.toString() +
     DateTime nowDate = DateTime.now();
     String date = DateFormat('yyyy年MM月dd日(').format(nowDate) +
         weekdays[nowDate.weekday].toString() +
@@ -64,8 +59,8 @@ class ManualInputScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(30.0),
                     child: Image.asset('assets/manualinput_title.png'),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: ManualInputSearch(),
                   ),
                   SizedBox(
@@ -87,7 +82,7 @@ class ManualInputScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(width: 3),
                     ),
-                    child: Text(
+                    child: const Text(
                       "領   収   証",
                       style: TextStyle(fontSize: 24),
                     ),
@@ -102,7 +97,7 @@ class ManualInputScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: size.deviceHeight * 0.10),
-                      Text(
+                      const Text(
                         "カロリー",
                         style: TextStyle(
                           fontSize: 24,
@@ -117,13 +112,13 @@ class ManualInputScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "ハンバーグ",
                               style: TextStyle(
                                 fontSize: 24,
                               ),
                             ),
-                            Text(
+                            const Text(
                               "548kal",
                               style: TextStyle(
                                 fontSize: 24,
@@ -132,8 +127,8 @@ class ManualInputScreen extends StatelessWidget {
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.only(left: 3, right: 3),
-                          child: Divider(
+                          padding: const EdgeInsets.only(left: 3, right: 3),
+                          child: const Divider(
                             color: Colors.black,
                             thickness: 2,
                           ),
@@ -163,8 +158,8 @@ class ManualInputScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ManualInputRegistButton(),
-            ManualInputBarcodeButton(),
+            const ManualInputRegistButton(),
+            const ManualInputBarcodeButton(),
             Padding(padding: EdgeInsets.all(size.deviceHeight * 0.02)),
           ],
         ),
