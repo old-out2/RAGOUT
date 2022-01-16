@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         title: 'RAGOUT',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          fontFamily: 'Hiragino Maru Gothic ProN',
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
