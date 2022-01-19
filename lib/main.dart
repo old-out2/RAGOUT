@@ -1,6 +1,7 @@
 import 'package:app/importer.dart';
-import 'package:app/screens/tutorial_screen.dart';
+import 'package:app/screens/tutorial/tutorial_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,16 +28,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'RAGOUT',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          fontFamily: 'Hiragino Maru Gothic ProN',
-        ),
-        initialRoute: '/',
-        routes: <String, WidgetBuilder>{
-          '/': (context) => const HomeScreen(title: 'RAGOUT'),
-          '/tutorial': (BuildContext context) => const TutorialScreen(),
-        });
+      title: 'RAGOUT',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Hiragino Maru Gothic ProN',
+      ),
+      initialRoute: '/',
+      routes: <String, WidgetBuilder>{
+        '/': (context) => const HomeScreen(title: 'RAGOUT'),
+        '/tutorial': (BuildContext context) => const TutorialScreen(),
+      },
+      // ここを追加する。
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      // ここを追加する。
+      supportedLocales: [
+        const Locale("en"),
+        const Locale("ja"),
+      ],
+    );
   }
 }
 

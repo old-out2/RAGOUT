@@ -111,6 +111,7 @@ class ManualInputScreen extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //listタイル形式
                           children: [
                             const Text(
                               "ハンバーグ",
