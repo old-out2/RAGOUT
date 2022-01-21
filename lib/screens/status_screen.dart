@@ -19,8 +19,8 @@ class _StatusScreenState extends State<StatusScreen> {
   void initState() {
     super.initState();
     const double radius = 5;
-    _vertex = PreferredSize(
-      preferredSize: const Size.square(2 * radius),
+    _vertex = const PreferredSize(
+      preferredSize: Size.square(2 * radius),
       child: CircleAvatar(
         backgroundColor: Colors.blueGrey,
         radius: radius,
@@ -42,22 +42,22 @@ class _StatusScreenState extends State<StatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/bgimage_status.png'),
-          fit: BoxFit.cover,
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/bgimage_status.png'),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: const [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 90, 0, 0),
+              padding: EdgeInsets.only(top: 50),
               child: StatusRadarChart(),
             ),
-            const DressupButton(),
+            DressupButton(),
           ],
         ),
       ),
