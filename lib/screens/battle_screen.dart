@@ -10,9 +10,11 @@ class BattleScreen extends StatefulWidget {
 class _BattleScreenState extends State<BattleScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text("冒険する"),
+    return Scaffold(
+      body: Container(
+        child: Center(
+          child: Text("冒険する"),
+        ),
       ),
     );
   }
