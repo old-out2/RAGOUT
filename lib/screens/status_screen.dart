@@ -2,7 +2,7 @@ import 'package:app/importer.dart';
 import 'package:app/widgets/status_chart.dart';
 
 class StatusScreen extends StatefulWidget {
-  StatusScreen({Key? key}) : super(key: key);
+  const StatusScreen({Key? key}) : super(key: key);
 
   @override
   _StatusScreenState createState() => _StatusScreenState();

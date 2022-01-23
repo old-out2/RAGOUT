@@ -1,8 +1,8 @@
 import 'package:app/importer.dart';
-import 'package:app/screens/manualinput_screen.dart';
+// import 'package:app/screens/barcode_screen.dart';
 
-class GrowthButton extends StatelessWidget {
-  const GrowthButton({
+class BarcodeButton extends StatelessWidget {
+  const BarcodeButton({
     Key? key,
   }) : super(key: key);
 
@@ -13,11 +13,11 @@ class GrowthButton extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ManualInputScreen()),
+            MaterialPageRoute(builder: (context) => const GrowthScreen()),
           );
         },
         child: Image.asset(
-          'assets/growth.png',
+          'assets/barcode.png',
         ),
       ),
     );
