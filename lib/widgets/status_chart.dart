@@ -31,8 +31,8 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
       FiveMajorNutrientsChart(),
       FiveMajorNutrientsChart(),
     ];
-
     size.init(context);
+
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
