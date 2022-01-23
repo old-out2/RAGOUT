@@ -21,6 +21,8 @@ dependencies:
   flutter_sliding_tutorial:
   flutter_localizations:
     sdk: flutter
+  flutter_slidable: ^1.2.0
+  flutter_typeahead:
 
   cupertino_icons: ^1.0.2
 

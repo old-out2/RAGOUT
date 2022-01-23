@@ -1,10 +1,16 @@
+import 'dart:developer';
+
 import 'package:app/importer.dart';
 import 'package:app/models/manualinput_search_model.dart';
 import 'package:app/widgets/manualinput_barcode_button.dart';
 import 'package:app/widgets/manualinput_regist_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+List<Slidable> _list = [];
 
 class ManualInputScreen extends StatelessWidget {
   const ManualInputScreen({
@@ -31,6 +37,7 @@ class ManualInputScreen extends StatelessWidget {
     size.init(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color.fromRGBO(254, 241, 188, 1),
       appBar: AppBar(
         // AppBarを隠す
@@ -56,7 +63,7 @@ class ManualInputScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(30.0),
+                    padding: const EdgeInsets.all(25.0),
                     child: Image.asset('assets/manualinput_title.png'),
                   ),
                   const Padding(
@@ -111,18 +118,16 @@ class ManualInputScreen extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //listタイル形式
+                          //_listタイル形式
                           children: [
-                            const Text(
-                              "ハンバーグ",
-                              style: TextStyle(
-                                fontSize: 24,
-                              ),
-                            ),
-                            const Text(
-                              "548kal",
-                              style: TextStyle(
-                                fontSize: 24,
+                            //一連の流れ　これを関数化させる
+                            Expanded(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _list.length,
+                                itemBuilder: (BuildContext context, index) {
+                                  return _list[index];
+                                },
                               ),
                             ),
                           ],
@@ -140,7 +145,7 @@ class ManualInputScreen extends StatelessWidget {
                   Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: const [
                         Text(
                           "合計",
                           style: TextStyle(
@@ -169,10 +174,19 @@ class ManualInputScreen extends StatelessWidget {
   }
 }
 
-class ManualInputSearch extends StatelessWidget {
+class __list {}
+
+class ManualInputSearch extends StatefulWidget {
   const ManualInputSearch({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<ManualInputSearch> createState() => _ManualInputSearchState();
+}
+
+class _ManualInputSearchState extends State<ManualInputSearch> {
+  final TextEditingController _typeAheadController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -181,17 +195,73 @@ class ManualInputSearch extends StatelessWidget {
       child: Consumer<ManualInputSearchModel>(builder: (context, model, child) {
         return Column(
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                suffixIcon: Icon(Icons.search),
-                border: UnderlineInputBorder(),
-                // labelText: '',
-                hintText: "食べたものを検索",
+            TypeAheadField(
+              getImmediateSuggestions: true,
+              textFieldConfiguration: TextFieldConfiguration(
+                controller: this._typeAheadController,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.search),
+                    border: UnderlineInputBorder(),
+                    labelText: '食べたものを検索'),
+                onChanged: (text) {
+                  model.text = text; // <= modelのtext変数に値を渡す
+                  model.search();
+                  // debugPrint(model.searchResultList.toString());
+                },
               ),
-              onChanged: (text) {
-                model.text = text; // <= modelのtext変数に値を渡す
-                model.search();
+              suggestionsCallback: (pattern) {
+                // model.text = pattern;
+                // model.search();
+                return model.searchResultList;
               },
+              itemBuilder: (context, Map<String, String> suggestion) {
+                // debugPrint(model.searchResultList.toString());
+                return Card(
+                    child: ListTile(
+                  title: Text(suggestion['name'].toString()),
+                ));
+              },
+              transitionBuilder: (context, suggestionsBox, controller) {
+                return suggestionsBox;
+              },
+              onSuggestionSelected: (Map<String, String> suggestion) {
+                this._typeAheadController.text = suggestion['name'].toString();
+                // debugPrint(suggestion.toString());
+                _list.add(Slidable(
+                  endActionPane: ActionPane(motion: ScrollMotion(), children: [
+                    SlidableAction(
+                      onPressed: (context) {
+                        debugPrint(_list.length.toString());
+                        // _list.remove(value)
+                        // suggestion.clear();
+                      },
+                      backgroundColor: Color(0xFFFE4A49),
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete,
+                      label: 'Delete',
+                    ),
+                  ]),
+                  child: ListTile(
+                    leading: Text(
+                      suggestion['name'].toString(),
+                      style: TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                    trailing: Text(
+                      suggestion['cal'].toString(),
+                      style: TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                ));
+              },
+              // validator: (value) {
+              //   if (value.isEmpty) {
+              //     return 'Please select a city';
+              //   }
+              // },
             ),
           ],
         );

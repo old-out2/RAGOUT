@@ -9,7 +9,12 @@ class ManualInputBarcodeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const GrowthScreen()),
+          );
+        },
         child: Image.asset(
           'assets/manualinput_barcode.png',
         ),

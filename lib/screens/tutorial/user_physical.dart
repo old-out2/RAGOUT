@@ -22,6 +22,17 @@ class _UserphysicalPageState extends State<UserphysicalPage> {
   List<String> list = ['男性', '女性', 'その他'];
 
   @override
+  void initState() {
+    super.initState();
+    gendar();
+  }
+
+  void gendar() async {
+    final pref = await SharedPreferences.getInstance();
+    pref.setInt('gender', list.lastIndexOf(dropdownValue));
+  }
+
+  @override
   Widget build(BuildContext context) {
     size.init(context);
 
@@ -46,7 +57,7 @@ class _UserphysicalPageState extends State<UserphysicalPage> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                 ),
-                onSubmitted: (value) async {
+                onChanged: (value) async {
                   final pref = await SharedPreferences.getInstance();
                   pref.setString('name', value);
                 },
@@ -75,7 +86,7 @@ class _UserphysicalPageState extends State<UserphysicalPage> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                     ),
-                    onSubmitted: (value) async {
+                    onChanged: (value) async {
                       final pref = await SharedPreferences.getInstance();
                       pref.setString('height', value);
                     },
@@ -115,7 +126,7 @@ class _UserphysicalPageState extends State<UserphysicalPage> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                     ),
-                    onSubmitted: (value) async {
+                    onChanged: (value) async {
                       final pref = await SharedPreferences.getInstance();
                       pref.setString('weight', value);
                     },

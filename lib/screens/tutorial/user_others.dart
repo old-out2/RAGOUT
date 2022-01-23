@@ -23,6 +23,17 @@ class _UserothersPageState extends State<UserothersPage> {
   late DateTime _date = new DateTime.now();
   DateFormat outputFormat = DateFormat('yyyy/MM/dd');
 
+  @override
+  void initState() {
+    super.initState();
+    activeLevel();
+  }
+
+  void activeLevel() async {
+    final pref = await SharedPreferences.getInstance();
+    pref.setInt('ActiveLevel', list.lastIndexOf(dropdownValue));
+  }
+
   //チュートリアルを行った判定を保存
   void _showTutorial(BuildContext context) async {
     final pref = await SharedPreferences.getInstance();
@@ -100,7 +111,7 @@ class _UserothersPageState extends State<UserothersPage> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                     ),
-                    onSubmitted: (value) async {
+                    onChanged: (value) async {
                       final pref = await SharedPreferences.getInstance();
                       pref.setString('Target_Weight', value);
                     },
@@ -165,10 +176,9 @@ class _UserothersPageState extends State<UserothersPage> {
             onChanged: (String? newValue) async {
               setState(() {
                 dropdownValue = newValue!;
-                debugPrint(list.lastIndexOf(newValue).toString());
               });
               final pref = await SharedPreferences.getInstance();
-              pref.setInt('ActiveLevel', list.lastIndexOf(newValue!));
+              pref.setInt('ActiveLevel', list.lastIndexOf(dropdownValue));
             },
             items: list.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -190,7 +200,7 @@ class _UserothersPageState extends State<UserothersPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   _showTutorial(context);
                   Navigator.push(
                     context,

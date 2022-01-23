@@ -3,6 +3,7 @@ import 'package:app/screens/tutorial/user_physical.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sliding_tutorial/flutter_sliding_tutorial.dart';
+import 'package:app/importer.dart';
 
 class SlidingTutorial extends StatefulWidget {
   const SlidingTutorial({
@@ -25,6 +26,9 @@ class _SlidingTutorial extends State<SlidingTutorial> {
 
   @override
   void initState() {
+    Future(() async {
+      await Food.insertFood();
+    });
     _pageController = widget.controller;
 
     /// Listen to [PageView] position updates.
@@ -40,8 +44,8 @@ class _SlidingTutorial extends State<SlidingTutorial> {
 
       /// You can use your own color list for page background
       colors: const [
-        Color(0xFFF0C85A),
-        Color(0xFFF0C85A),
+        Color.fromRGBO(254, 241, 188, 1),
+        Color.fromRGBO(254, 241, 188, 1),
       ],
       child: Container(
         child: Stack(
