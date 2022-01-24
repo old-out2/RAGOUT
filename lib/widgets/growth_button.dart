@@ -7,7 +7,8 @@ class GrowthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      width: size.deviceWidth * 0.33,
       child: TextButton(
         onPressed: () {
           Navigator.push(
