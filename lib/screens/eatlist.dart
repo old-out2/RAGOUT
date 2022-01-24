@@ -15,6 +15,15 @@ class _EatListState extends State<EatList> {
     super.initState();
   }
 
+  Future _loadData() async {
+    //Future.delay()を使用して擬似的に非同期処理を表現
+    await Future.delayed(Duration(seconds: 2));
+    list = await Eat.getEat();
+    setState(() {
+      list.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,12 +36,16 @@ class _EatListState extends State<EatList> {
           iconTheme: const IconThemeData(color: Colors.black),
         ),
         extendBodyBehindAppBar: true,
-        body: ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, index) {
-              return Card(
-                child: ListTile(title: Text(list[index].toString())),
-              );
-            }));
+        body: RefreshIndicator(
+            onRefresh: () async {
+              await _loadData();
+            },
+            child: ListView.builder(
+                itemCount: list.length,
+                itemBuilder: (BuildContext context, index) {
+                  return Card(
+                    child: ListTile(title: Text(list[index].toString())),
+                  );
+                })));
   }
 }
