@@ -42,10 +42,12 @@ class Food {
   static Future<Database> get database async {
     Future<Database> _database = openDatabase(
       join(await getDatabasesPath(), 'food_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
+      onCreate: (db, version) async {
+        await db.execute(
           "CREATE TABLE food(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
+        await db.execute(
+            "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal TEXT,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)");
       },
       version: 1,
     );
@@ -139,19 +141,21 @@ class Eat {
         where: "date = ? AND name = ?", whereArgs: [eat.date, eat.name]);
   }
 
-  static Future<List<Eat>> getEat() async {
+  static Future<List<Map<String, dynamic>>> getEat() async {
     Database db = await database;
     //名前が一致する物を返す処理を書く必要がある
-    List<Map<String, dynamic>> maps = await db.query("eat");
+    List<Map<String, Object?>> maps = await db.query("eat");
 
-    return List.generate(maps.length, (i) {
-      return Eat(
-        date: maps[i]["date"],
-        name: maps[i]["name"],
-        growth: maps[i]["growth"],
-        status: maps[i]["status"],
-      );
-    });
+    return maps;
+
+    // return List.generate(maps.length, (i) {
+    //   return Eat(
+    //     date: maps[i]["date"],
+    //     name: maps[i]["name"],
+    //     growth: maps[i]["growth"],
+    //     status: maps[i]["status"],
+    //   );
+    // });
   }
 }
 
