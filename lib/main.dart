@@ -114,11 +114,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SizedBox(),
                     ),
                     const SizedBox(height: 70),
-                    const Text(
-                      "1,234kal",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      margin: EdgeInsets.only(left: 25),
+                      child: const Text(
+                        "1,234kal",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     SizedBox(height: 90),
