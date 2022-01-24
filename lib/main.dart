@@ -77,10 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
               //   ),
               // ),
               Row(
-                children: [
-                  const GrowthButton(),
-                  const TrophyButton(),
-                  const BattleButton(),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  GrowthButton(),
+                  TrophyButton(),
+                  BattleButton(),
                 ],
               ),
             ],
