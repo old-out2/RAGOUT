@@ -90,6 +90,42 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              Container(
+                margin: EdgeInsets.only(left: 28),
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "経験値",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3),
+                        borderRadius: BorderRadius.circular(3),
+                        color: Colors.orange,
+                      ),
+                      width: 160,
+                      height: 30,
+                      child: SizedBox(),
+                    ),
+                    const SizedBox(height: 70),
+                    const Text(
+                      "1,234kal",
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 90),
+                  ],
+                ),
+              ),
+
               const AvatarButton(),
               // Container(
               //   width: 120,
