@@ -113,10 +113,11 @@ class _HomeScreenState extends State<HomeScreen> {
               // 白い背景：#F2F2F2
               // クリーム入り背景：#FFF1BC
               Row(
-                children: [
-                  const GrowthButton(),
-                  const TrophyButton(),
-                  const BattleButton(),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  GrowthButton(),
+                  TrophyButton(),
+                  BattleButton(),
                 ],
               ),
             ],
