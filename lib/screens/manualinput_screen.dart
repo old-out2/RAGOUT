@@ -11,6 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 List<Slidable> _list = [];
+List<Map<String, String>> eatfood = [];
+double totalcal = 0;
 
 class ManualInputScreen extends StatelessWidget {
   const ManualInputScreen({
@@ -35,6 +37,8 @@ class ManualInputScreen extends StatelessWidget {
         "" +
         DateFormat(') HH:mm').format(nowDate);
     size.init(context);
+
+    final InputKey = GlobalObjectKey<_ManualInputSearchState>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -122,6 +126,8 @@ class ManualInputScreen extends StatelessWidget {
                           children: [
                             //一連の流れ　これを関数化させる
                             Expanded(
+                                child: Container(
+                              height: size.deviceHeight * 0.15,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: _list.length,
@@ -129,7 +135,7 @@ class ManualInputScreen extends StatelessWidget {
                                   return _list[index];
                                 },
                               ),
-                            ),
+                            )),
                           ],
                         ),
                         Container(
@@ -145,7 +151,7 @@ class ManualInputScreen extends StatelessWidget {
                   Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text(
                           "合計",
                           style: TextStyle(
@@ -153,7 +159,7 @@ class ManualInputScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "548kal",
+                          "${totalcal}kcal",
                           style: TextStyle(
                             fontSize: 24,
                           ),
@@ -173,8 +179,6 @@ class ManualInputScreen extends StatelessWidget {
     );
   }
 }
-
-class __list {}
 
 class ManualInputSearch extends StatefulWidget {
   const ManualInputSearch({
@@ -196,7 +200,7 @@ class _ManualInputSearchState extends State<ManualInputSearch> {
         return Column(
           children: [
             TypeAheadField(
-              getImmediateSuggestions: true,
+              // getImmediateSuggestions: true,
               textFieldConfiguration: TextFieldConfiguration(
                 controller: this._typeAheadController,
                 decoration: InputDecoration(
@@ -226,12 +230,15 @@ class _ManualInputSearchState extends State<ManualInputSearch> {
               },
               onSuggestionSelected: (Map<String, String> suggestion) {
                 this._typeAheadController.text = suggestion['name'].toString();
+                totalcal += double.parse(suggestion['cal'].toString());
+                eatfood.add(suggestion);
                 // debugPrint(suggestion.toString());
                 _list.add(Slidable(
                   endActionPane: ActionPane(motion: ScrollMotion(), children: [
                     SlidableAction(
                       onPressed: (context) {
-                        debugPrint(_list.length.toString());
+                        _list.remove(suggestion);
+                        eatfood.remove(suggestion);
                         // _list.remove(value)
                         // suggestion.clear();
                       },

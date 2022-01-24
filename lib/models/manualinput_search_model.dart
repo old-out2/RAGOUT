@@ -29,9 +29,16 @@ class ManualInputSearchModel extends ChangeNotifier {
       var SearchList = await Food.getFoods(text);
       SearchList.forEach((element) {
         searchResultList.add({
-          "name":
-              element.name.replaceAll(RegExp("＜.*＞|（.*）|" r'\s'), "").trim(),
-          "cal": element.cal.toString() + "Kcal"
+          // "id": element.id.toString(),
+          "name": element.name
+              .replaceAll(RegExp("＜.*＞|（.*）|［.*］|" r'\s'), "")
+              .trim(),
+          "cal": element.cal.toString(),
+          "protein": element.protein,
+          "lipids": element.lipids,
+          "carb": element.carb,
+          "mineral": element.mineral,
+          "bitamin": element.bitamin
         });
       });
       // this.searchList.forEach(

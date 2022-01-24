@@ -108,26 +108,22 @@ class Eat {
       join(await getDatabasesPath(), 'food_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT,date TEXT, name TEXT ,growth INTEGER, status TEXT)",
-        );
+            "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal TEXT,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)"
+            // "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT,date TEXT, name TEXT ,growth INTEGER, status TEXT)",
+            );
       },
       version: 1,
     );
     return _database;
   }
 
-  static Future<void> insertEat() async {
-    // String loadData = await rootBundle.loadString('json/food.json');
-    // List<dynamic> jsonArray = jsonDecode(loadData);
-    var test = {
-      "date": "2021/01/01",
-      "name": "TESTFood",
-      "growth": 100,
-      "status":
-          "{'cal': 100, 'protein': 5,'lipids': 4,'carb': 3,'mineral': 2,'bitamin':1}"
-    };
+  static Future<void> insertEat(List<Map<String, String>> eatfood) async {
     Database db = await database;
-    await db.insert('eat', test, conflictAlgorithm: ConflictAlgorithm.replace);
+
+    for (var element in eatfood) {
+      await db.insert('eat', element,
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
     // for (var item in jsonArray) {
     //   await db.insert(
     //     'status',
