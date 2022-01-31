@@ -47,7 +47,11 @@ class Food {
           "CREATE TABLE food(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
         await db.execute(
-            "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal TEXT,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)");
+          "CREATE TABLE eat(date TEXT, foodid INTEGER, eiyo TEXT ,FOREIGN KEY(foodid) REFERENCES food(id))",
+        );
+        await db.execute(
+          "CREATE TABLE status(date TEXT PRIMARY KEY, growth INTEGER, status TEXT)",
+        );
       },
       version: 1,
     );
@@ -91,29 +95,17 @@ class Food {
 //摂取カロリー
 class Eat {
   String date;
-  String name;
-  int growth;
-  String status;
+  int foodid;
+  String eiyo;
 
-  Eat(
-      {required this.date,
-      required this.name,
-      required this.growth,
-      required this.status});
-
+  Eat({required this.date, required this.foodid, required this.eiyo});
   Map<String, dynamic> toMap() {
-    return {'date': date, 'name': name, 'growth': growth, 'status': status};
+    return {'date': date, 'foodid': foodid, 'growth': eiyo};
   }
 
   static Future<Database> get database async {
     Future<Database> _database = openDatabase(
       join(await getDatabasesPath(), 'food_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-            "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal TEXT,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)"
-            // "CREATE TABLE eat(id INTEGER PRIMARY KEY AUTOINCREMENT,date TEXT, name TEXT ,growth INTEGER, status TEXT)",
-            );
-      },
       version: 1,
     );
     return _database;
@@ -135,11 +127,11 @@ class Eat {
     // }
   }
 
-  static Future<void> updateEat(Eat eat) async {
-    Database db = await database;
-    await db.update('eat', eat.toMap(),
-        where: "date = ? AND name = ?", whereArgs: [eat.date, eat.name]);
-  }
+  // static Future<void> updateEat(Eat eat) async {
+  //   Database db = await database;
+  //   await db.update('eat', eat.toMap(),
+  //       where: "date = ? AND name = ?", whereArgs: [eat.date, eat.name]);
+  // }
 
   static Future<List<Map<String, dynamic>>> getEat() async {
     Database db = await database;
@@ -175,11 +167,6 @@ class Status {
   static Future<Database> get database async {
     Future<Database> _database = openDatabase(
       join(await getDatabasesPath(), 'food_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE status(date TEXT PRIMARY KEY, growth INTEGER, status TEXT)",
-        );
-      },
       version: 1,
     );
     return _database;

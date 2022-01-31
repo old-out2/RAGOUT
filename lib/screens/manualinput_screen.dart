@@ -70,9 +70,10 @@ class ManualInputScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(25.0),
                     child: Image.asset('assets/manualinput_title.png'),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: ManualInputSearch(),
+                    child: ManualInputSearch(
+                        nowDate: DateFormat('yyyy/MM//dd').format(nowDate)),
                   ),
                   SizedBox(
                     height: size.deviceHeight * 0.02,
@@ -181,9 +182,8 @@ class ManualInputScreen extends StatelessWidget {
 }
 
 class ManualInputSearch extends StatefulWidget {
-  const ManualInputSearch({
-    Key? key,
-  }) : super(key: key);
+  final String nowDate;
+  const ManualInputSearch({Key? key, required this.nowDate}) : super(key: key);
 
   @override
   State<ManualInputSearch> createState() => _ManualInputSearchState();
@@ -231,7 +231,12 @@ class _ManualInputSearchState extends State<ManualInputSearch> {
               onSuggestionSelected: (Map<String, String> suggestion) {
                 this._typeAheadController.text = suggestion['name'].toString();
                 totalcal += double.parse(suggestion['cal'].toString());
-                eatfood.add(suggestion);
+                eatfood.add({
+                  "date": widget.nowDate,
+                  "foodid": suggestion["id"].toString(),
+                  "eiyo": "",
+                });
+                debugPrint(eatfood.toString());
                 // debugPrint(suggestion.toString());
                 _list.add(Slidable(
                   endActionPane: ActionPane(motion: ScrollMotion(), children: [

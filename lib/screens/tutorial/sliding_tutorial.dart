@@ -32,7 +32,7 @@ class _SlidingTutorial extends State<SlidingTutorial> {
     _pageController = widget.controller;
 
     /// Listen to [PageView] position updates.
-    _pageController..addListener(_onScroll);
+    _pageController.addListener(_onScroll);
     super.initState();
   }
 
