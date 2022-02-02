@@ -21,6 +21,7 @@ export 'package:url_launcher/url_launcher.dart';
 export 'dart:io';
 export 'package:flutter/foundation.dart';
 export 'package:app/size_config.dart';
+export 'package:app/models/database.dart';
 
 // 称号一覧
 export 'screens/trophy_screen.dart';

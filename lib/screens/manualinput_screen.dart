@@ -1,11 +1,18 @@
+import 'dart:developer';
+
 import 'package:app/importer.dart';
 import 'package:app/models/manualinput_search_model.dart';
 import 'package:app/widgets/manualinput_barcode_button.dart';
 import 'package:app/widgets/manualinput_regist_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+List<Slidable> _list = [];
+List<Map<String, String>> eatfood = [];
+double totalcal = 0;
 
 class ManualInputScreen extends StatelessWidget {
   const ManualInputScreen({
@@ -15,7 +22,6 @@ class ManualInputScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = SizeConfig();
-    initializeDateFormatting('ja');
     var weekdays = {
       1: "月",
       2: "火",
@@ -25,9 +31,6 @@ class ManualInputScreen extends StatelessWidget {
       6: "土",
       7: "日",
     };
-    // String nowDate2 =
-    //     DateFormat.yMMMMEEEEd('ja').format(DateTime.now()).toString();
-    // String date = nowDate.year.toString() + "年" + nowDate.month.toString() +
     DateTime nowDate = DateTime.now();
     String date = DateFormat('yyyy年MM月dd日(').format(nowDate) +
         weekdays[nowDate.weekday].toString() +
@@ -35,7 +38,10 @@ class ManualInputScreen extends StatelessWidget {
         DateFormat(') HH:mm').format(nowDate);
     size.init(context);
 
+    final InputKey = GlobalObjectKey<_ManualInputSearchState>(context);
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color.fromRGBO(254, 241, 188, 1),
       appBar: AppBar(
         // AppBarを隠す
@@ -61,12 +67,13 @@ class ManualInputScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(30.0),
+                    padding: const EdgeInsets.all(25.0),
                     child: Image.asset('assets/manualinput_title.png'),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: ManualInputSearch(),
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: ManualInputSearch(
+                        nowDate: DateFormat('yyyy/MM//dd').format(nowDate)),
                   ),
                   SizedBox(
                     height: size.deviceHeight * 0.02,
@@ -87,7 +94,7 @@ class ManualInputScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(width: 3),
                     ),
-                    child: Text(
+                    child: const Text(
                       "領   収   証",
                       style: TextStyle(fontSize: 24),
                     ),
@@ -102,7 +109,7 @@ class ManualInputScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: size.deviceHeight * 0.10),
-                      Text(
+                      const Text(
                         "カロリー",
                         style: TextStyle(
                           fontSize: 24,
@@ -116,24 +123,25 @@ class ManualInputScreen extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //_listタイル形式
                           children: [
-                            Text(
-                              "ハンバーグ",
-                              style: TextStyle(
-                                fontSize: 24,
+                            //一連の流れ　これを関数化させる
+                            Expanded(
+                                child: Container(
+                              height: size.deviceHeight * 0.15,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _list.length,
+                                itemBuilder: (BuildContext context, index) {
+                                  return _list[index];
+                                },
                               ),
-                            ),
-                            Text(
-                              "548kal",
-                              style: TextStyle(
-                                fontSize: 24,
-                              ),
-                            ),
+                            )),
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.only(left: 3, right: 3),
-                          child: Divider(
+                          padding: const EdgeInsets.only(left: 3, right: 3),
+                          child: const Divider(
                             color: Colors.black,
                             thickness: 2,
                           ),
@@ -152,7 +160,7 @@ class ManualInputScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "548kal",
+                          "${totalcal}kcal",
                           style: TextStyle(
                             fontSize: 24,
                           ),
@@ -163,8 +171,8 @@ class ManualInputScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ManualInputRegistButton(),
-            ManualInputBarcodeButton(),
+            const ManualInputRegistButton(),
+            const ManualInputBarcodeButton(),
             Padding(padding: EdgeInsets.all(size.deviceHeight * 0.02)),
           ],
         ),
@@ -173,10 +181,16 @@ class ManualInputScreen extends StatelessWidget {
   }
 }
 
-class ManualInputSearch extends StatelessWidget {
-  const ManualInputSearch({
-    Key? key,
-  }) : super(key: key);
+class ManualInputSearch extends StatefulWidget {
+  final String nowDate;
+  const ManualInputSearch({Key? key, required this.nowDate}) : super(key: key);
+
+  @override
+  State<ManualInputSearch> createState() => _ManualInputSearchState();
+}
+
+class _ManualInputSearchState extends State<ManualInputSearch> {
+  final TextEditingController _typeAheadController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -185,17 +199,81 @@ class ManualInputSearch extends StatelessWidget {
       child: Consumer<ManualInputSearchModel>(builder: (context, model, child) {
         return Column(
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                suffixIcon: Icon(Icons.search),
-                border: UnderlineInputBorder(),
-                // labelText: '',
-                hintText: "食べたものを検索",
+            TypeAheadField(
+              // getImmediateSuggestions: true,
+              textFieldConfiguration: TextFieldConfiguration(
+                controller: this._typeAheadController,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.search),
+                    border: UnderlineInputBorder(),
+                    labelText: '食べたものを検索'),
+                onChanged: (text) {
+                  model.text = text; // <= modelのtext変数に値を渡す
+                  model.search();
+                  // debugPrint(model.searchResultList.toString());
+                },
               ),
-              onChanged: (text) {
-                model.text = text; // <= modelのtext変数に値を渡す
-                model.search();
+              suggestionsCallback: (pattern) {
+                // model.text = pattern;
+                // model.search();
+                return model.searchResultList;
               },
+              itemBuilder: (context, Map<String, String> suggestion) {
+                // debugPrint(model.searchResultList.toString());
+                return Card(
+                    child: ListTile(
+                  title: Text(suggestion['name'].toString()),
+                ));
+              },
+              transitionBuilder: (context, suggestionsBox, controller) {
+                return suggestionsBox;
+              },
+              onSuggestionSelected: (Map<String, String> suggestion) {
+                this._typeAheadController.text = suggestion['name'].toString();
+                totalcal += double.parse(suggestion['cal'].toString());
+                eatfood.add({
+                  "date": widget.nowDate,
+                  "foodid": suggestion["id"].toString(),
+                  "eiyo": "",
+                });
+                debugPrint(eatfood.toString());
+                // debugPrint(suggestion.toString());
+                _list.add(Slidable(
+                  endActionPane: ActionPane(motion: ScrollMotion(), children: [
+                    SlidableAction(
+                      onPressed: (context) {
+                        _list.remove(suggestion);
+                        eatfood.remove(suggestion);
+                        // _list.remove(value)
+                        // suggestion.clear();
+                      },
+                      backgroundColor: Color(0xFFFE4A49),
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete,
+                      label: 'Delete',
+                    ),
+                  ]),
+                  child: ListTile(
+                    leading: Text(
+                      suggestion['name'].toString(),
+                      style: TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                    trailing: Text(
+                      suggestion['cal'].toString(),
+                      style: TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                ));
+              },
+              // validator: (value) {
+              //   if (value.isEmpty) {
+              //     return 'Please select a city';
+              //   }
+              // },
             ),
           ],
         );
