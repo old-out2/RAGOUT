@@ -62,6 +62,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _counter = 0;
+  var size = SizeConfig();
 
   @override
   void initState() {
@@ -84,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    size.init(context);
     return Scaffold(
       appBar: AppBar(
         // AppBarを隠す
@@ -100,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 margin: EdgeInsets.only(left: 28),
@@ -108,64 +110,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "経験値",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const SizedBox(height: 40),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "経験値",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 5),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 3),
+                            borderRadius: BorderRadius.circular(3),
+                            color: Colors.orange,
+                          ),
+                          width: 160,
+                          height: 30,
+                        ),
+                        SizedBox(
+                          width: size.deviceWidth * 0.4,
+                          child: Image.asset('assets/shelf.png'),
+                        ),
+                      ],
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 3),
-                        borderRadius: BorderRadius.circular(3),
-                        color: Colors.orange,
-                      ),
-                      width: 160,
-                      height: 30,
-                      child: SizedBox(),
+                    Column(
+                      children: [
+                        const Text(
+                          "1234kal",
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: size.deviceWidth * 0.4,
+                          child: Image.asset('assets/shelf.png'),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 70),
-                    const Text(
-                      "1,234kal",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      children: [
+                        const Text(
+                          "3298歩",
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: size.deviceWidth * 0.4,
+                          child: Image.asset('assets/shelf.png'),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 90),
                   ],
                 ),
               ),
-
-              const AvatarButton(),
-              // Container(
-              //   width: 120,
-              //   height: 120,
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8.0),
-              //     image: DecorationImage(
-              //       image: AssetImage('assets/growth.png'),
-              //       fit: BoxFit.cover,
-              //     ),
-              //   ),
-              //   child: Material(
-              //     color: Colors.transparent,
-              //     child: InkWell(
-              //       borderRadius: BorderRadius.circular(8.0),
-              //       onTap: () {},
-              //     ),
-              //   ),
-              // ),
-              // 白い背景：#F2F2F2
-              // クリーム入り背景：#FFF1BC
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  GrowthButton(),
-                  TrophyButton(),
-                  BattleButton(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const AvatarButton(),
+                  // 白い背景：#F2F2F2
+                  // クリーム入り背景：#FFF1BC
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      GrowthButton(),
+                      TrophyButton(),
+                      BattleButton(),
+                    ],
+                  ),
                 ],
               ),
             ],

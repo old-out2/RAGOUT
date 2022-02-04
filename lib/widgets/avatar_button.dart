@@ -17,7 +17,7 @@ class AvatarButton extends StatelessWidget {
       },
       child: Image.asset(
         'assets/avatar.png',
-        height: 350,
+        height: 300,
       ),
     );
   }
