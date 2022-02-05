@@ -117,17 +117,6 @@ class ManualInputScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // SizedBox(
-                  //   height: size.deviceHeight * 0.18,
-                  //   child: ListView.builder(
-                  //     // shrinkWrap: true,
-                  //     itemCount: _list.length,
-                  //     itemBuilder: (BuildContext context, index) {
-                  //       print(_list.length);
-                  //       return _list[index];
-                  //     },
-                  //   ),
-                  // ),
                   Expanded(
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.start,
