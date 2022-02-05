@@ -4,14 +4,6 @@ import 'package:multi_charts/multi_charts.dart';
 import 'package:app/importer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-// const gridColor = Color(0xff68739f);
-// const titleColor = Color(0xff8c95db);
-// const fashionColor = Color(0xffe15665);
-// const artColor = Color(0xff63e7e5);
-// const boxingColor = Color(0xff83dea7);
-// const entertainmentColor = Colors.white70;
-// const offRoadColor = Color(0xFFFFF59D);
-
 class StatusRadarChart extends StatefulWidget {
   const StatusRadarChart({Key? key}) : super(key: key);
 
@@ -29,7 +21,7 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
   Widget build(BuildContext context) {
     final pages = <Widget>[
       FiveMajorNutrientsChart(),
-      FiveMajorNutrientsChart(),
+      FiveStatusChart(),
     ];
     size.init(context);
 
@@ -154,7 +146,7 @@ class FiveStatusChart extends StatelessWidget {
           child: Align(
             alignment: Alignment.topCenter,
             child: Image.asset(
-              "assets/protein.png",
+              "assets/power.png",
               height: size.deviceHeight * 0.04,
             ),
           ),
@@ -164,7 +156,7 @@ class FiveStatusChart extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerRight,
             child: Image.asset(
-              "assets/lipids.png",
+              "assets/physical.png",
               height: size.deviceHeight * 0.04,
             ),
           ),
@@ -174,8 +166,8 @@ class FiveStatusChart extends StatelessWidget {
           child: Align(
             alignment: Alignment.bottomRight,
             child: Image.asset(
-              "assets/mineral.png",
-              height: size.deviceHeight * 0.04,
+              "assets/wisdom.png",
+              height: size.deviceHeight * 0.036,
             ),
           ),
         ),
@@ -184,7 +176,7 @@ class FiveStatusChart extends StatelessWidget {
           child: Align(
             alignment: Alignment.bottomLeft,
             child: Image.asset(
-              "assets/vitamin.png",
+              "assets/speed.png",
               height: size.deviceHeight * 0.04,
             ),
           ),
@@ -194,7 +186,7 @@ class FiveStatusChart extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Image.asset(
-              "assets/sugar.png",
+              "assets/luck.png",
               height: size.deviceHeight * 0.04,
             ),
           ),
