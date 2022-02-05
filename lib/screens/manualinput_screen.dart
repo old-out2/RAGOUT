@@ -117,36 +117,46 @@ class ManualInputScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // SizedBox(
+                  //   height: size.deviceHeight * 0.18,
+                  //   child: ListView.builder(
+                  //     // shrinkWrap: true,
+                  //     itemCount: _list.length,
+                  //     itemBuilder: (BuildContext context, index) {
+                  //       print(_list.length);
+                  //       return _list[index];
+                  //     },
+                  //   ),
+                  // ),
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //_listタイル形式
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //_listタイル形式
-                          children: [
-                            //一連の流れ　これを関数化させる
-                            Expanded(
-                                child: Container(
-                              height: size.deviceHeight * 0.15,
+                        //一連の流れ これを関数化させる
+                        Expanded(
+                          child: SizedBox(
+                            child: Container(
                               child: ListView.builder(
-                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                // shrinkWrap: true,
                                 itemCount: _list.length,
                                 itemBuilder: (BuildContext context, index) {
                                   return _list[index];
                                 },
                               ),
-                            )),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(left: 3, right: 3),
-                          child: const Divider(
-                            color: Colors.black,
-                            thickness: 2,
+                            ),
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 3, right: 3),
+                    child: const Divider(
+                      color: Colors.black,
+                      thickness: 2,
                     ),
                   ),
                   Container(
@@ -238,36 +248,48 @@ class _ManualInputSearchState extends State<ManualInputSearch> {
                 });
                 debugPrint(eatfood.toString());
                 // debugPrint(suggestion.toString());
-                _list.add(Slidable(
-                  endActionPane: ActionPane(motion: ScrollMotion(), children: [
-                    SlidableAction(
-                      onPressed: (context) {
-                        _list.remove(suggestion);
-                        eatfood.remove(suggestion);
-                        // _list.remove(value)
-                        // suggestion.clear();
-                      },
-                      backgroundColor: Color(0xFFFE4A49),
-                      foregroundColor: Colors.white,
-                      icon: Icons.delete,
-                      label: 'Delete',
+                _list.add(
+                  Slidable(
+                    endActionPane: ActionPane(
+                      motion: ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) {
+                            _list.remove(suggestion);
+                            eatfood.remove(suggestion);
+                            // _list.remove(value)
+                            // suggestion.clear();
+                          },
+                          backgroundColor: Color(0xFFFE4A49),
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                      ],
                     ),
-                  ]),
-                  child: ListTile(
-                    leading: Text(
-                      suggestion['name'].toString(),
-                      style: TextStyle(
-                        fontSize: 24,
-                      ),
-                    ),
-                    trailing: Text(
-                      suggestion['cal'].toString(),
-                      style: TextStyle(
-                        fontSize: 24,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: size.deviceWidth * 0.55,
+                          child: Text(
+                            suggestion['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 22,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          suggestion['cal'].toString(),
+                          style: TextStyle(
+                            fontSize: 22,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ));
+                );
               },
               // validator: (value) {
               //   if (value.isEmpty) {
