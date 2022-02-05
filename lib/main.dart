@@ -65,6 +65,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var size = SizeConfig();
   int _nofSteps = 0;
+  double expPoint = 120;
   // 歩数取得用
   HealthFactory health = HealthFactory();
 
@@ -164,20 +165,33 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 5),
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 3),
-                            borderRadius: BorderRadius.circular(3),
-                            color: Colors.orange,
-                          ),
-                          width: 160,
-                          height: 30,
+                        Stack(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: Colors.orange,
+                              ),
+                              width: expPoint,
+                              height: 27,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 3),
+                                borderRadius: BorderRadius.circular(3),
+                                color: Colors.transparent,
+                              ),
+                              width: 200,
+                              height: 27,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: size.deviceWidth * 0.4,
-                          child: Image.asset('assets/shelf.png'),
-                        ),
+                        // SizedBox(
+                        //   width: size.deviceWidth * 0.4,
+                        //   child: Image.asset('assets/shelf.png'),
+                        // ),
                       ],
                     ),
                     Column(
@@ -197,6 +211,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                     Column(
                       children: [
+                        const Text(
+                          "今日の歩数",
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
                           "$_nofSteps歩",
                           style: const TextStyle(
