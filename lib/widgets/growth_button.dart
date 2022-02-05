@@ -8,6 +8,8 @@ class GrowthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var size = SizeConfig();
+    size.init(context);
     return SizedBox(
       width: size.deviceWidth * 0.33,
       child: TextButton(

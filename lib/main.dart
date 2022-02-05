@@ -84,6 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var size = SizeConfig();
+    size.init(context);
     return Scaffold(
       appBar: AppBar(
         // AppBarを隠す
@@ -125,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 30,
                       child: SizedBox(),
                     ),
-                    const SizedBox(height: 70),
+                    // const SizedBox(height: 70),
                     const Text(
                       "1,234kal",
                       style: TextStyle(
@@ -133,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 90),
+                    // SizedBox(height: 90),
                   ],
                 ),
               ),

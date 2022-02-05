@@ -1,4 +1,5 @@
 import 'package:app/importer.dart';
+import 'package:intl/intl.dart';
 
 class EatList extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class _EatListState extends State<EatList> {
   @override
   void initState() {
     Future(() async {
-      list = await Eat.getEat();
+      list = await Eat.getEat(DateFormat('yyyy/MM/dd').format(DateTime.now()));
     });
     super.initState();
   }
@@ -18,7 +19,7 @@ class _EatListState extends State<EatList> {
   Future _loadData() async {
     //Future.delay()を使用して擬似的に非同期処理を表現
     await Future.delayed(Duration(seconds: 2));
-    list = await Eat.getEat();
+    list = await Eat.getEat(DateFormat('yyyy/MM/dd').format(DateTime.now()));
     setState(() {
       list.toString();
     });
