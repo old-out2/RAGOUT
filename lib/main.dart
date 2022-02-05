@@ -2,6 +2,7 @@ import 'package:app/importer.dart';
 import 'package:app/screens/tutorial/tutorial_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:health/health.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,6 +64,38 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _counter = 0;
   var size = SizeConfig();
+  int _nofSteps = 10;
+  double _mgdl = 10.0;
+  // 歩数取得用
+  HealthFactory health = HealthFactory();
+
+  Future fetchStepData() async {
+    int? steps;
+
+    // get steps for today (i.e., since midnight)
+    final now = DateTime.now();
+    final midnight = DateTime(now.year, now.month, now.day);
+
+    bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
+
+    if (requested) {
+      try {
+        steps = await health.getTotalStepsInInterval(midnight, now);
+      } catch (error) {
+        print("Caught exception in getTotalStepsInInterval: $error");
+      }
+
+      print('Total number of steps: $steps');
+
+      setState(() {
+        _nofSteps = (steps == null) ? 0 : steps;
+        // _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
+      });
+    } else {
+      print("Authorization not granted");
+      // setState(() => _state = AppState.DATA_NOT_FETCHED);
+    }
+  }
 
   @override
   void initState() {
