@@ -3,6 +3,7 @@ import 'package:app/screens/tutorial/tutorial_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:health/health.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,21 +62,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var size = SizeConfig();
-  int _nofSteps = 10;
-  double _mgdl = 10.0;
+  int _nofSteps = 0;
   // 歩数取得用
   HealthFactory health = HealthFactory();
 
   Future fetchStepData() async {
     int? steps;
-
-    // get steps for today (i.e., since midnight)
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
-
     bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
 
     if (requested) {
@@ -89,17 +85,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         _nofSteps = (steps == null) ? 0 : steps;
-        // _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
       });
     } else {
       print("Authorization not granted");
-      // setState(() => _state = AppState.DATA_NOT_FETCHED);
     }
   }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+    fetchStepData();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
@@ -110,10 +106,24 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // アプリがバックグラウンドに行ったとき
+    } else if (state == AppLifecycleState.resumed) {
+      // アプリが復帰したとき
+      fetchStepData();
+    } else if (state == AppLifecycleState.inactive) {
+      // アプリの停止時
+    } else if (state == AppLifecycleState.detached) {
+      // アプリが終了したとき
+    }
   }
 
   @override
@@ -187,9 +197,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Column(
                       children: [
-                        const Text(
-                          "3298歩",
-                          style: TextStyle(
+                        Text(
+                          "$_nofSteps歩",
+                          style: const TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
                           ),
