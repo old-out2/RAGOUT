@@ -16,22 +16,21 @@ class TrophyButton extends StatelessWidget {
       width: size.deviceWidth * 0.33,
       child: TextButton(
         onPressed: () {
-          // showDialog(
-          //   context: context,
-          //   builder: (context) {
-          //     return AlertDialog(
-          //       content: SizedBox(
-          //         width: size.deviceWidth * 1,
-          //         height: size.deviceHeight * 0.7,
-          //         child: TrophyScreen(),
-          //       ),
-          //     );
-          //   },
-          // );
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => TrophyScreen()),
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return Dialog(
+                insetPadding: EdgeInsets.zero,
+                backgroundColor: Colors.transparent,
+                child: TrophyScreen(),
+              );
+            },
           );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => TrophyScreen()),
+          // );
           // showModalBottomSheet(
           //     backgroundColor: Colors.transparent,
           //     isScrollControlled: true,
