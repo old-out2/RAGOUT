@@ -11,21 +11,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // void _showTutorial(BuildContext context) async {
-  //   final pref = await SharedPreferences.getInstance();
-
-  //   if (pref.getBool('isAlreadyFirstLaunch') != true) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const TutorialScreen(),
-  //         fullscreenDialog: true,
-  //       ),
-  //     );
-  //     pref.setBool('isAlreadyFirstLaunch', true);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -81,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     size.init(context);
-    debugPrint(list.totalcal.toString());
+    // debugPrint(list.totalcal.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -128,13 +113,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     FutureBuilder(
                         future: list.callist(),
                         builder: (context, snapshot) {
-                          return Text(
-                            list.totalcal.toString() + "kal",
-                            style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
+                          return GestureDetector(
+                              onTap: () {
+                                setState(() {});
+                              },
+                              child: Text(
+                                list.homecal.toString() + "kal",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ));
                         })
                     // SizedBox(height: 90),
                   ],
