@@ -1,4 +1,5 @@
 import 'package:app/importer.dart';
+import 'package:app/models/return.dart';
 import 'package:app/screens/eatlist.dart';
 import 'package:app/screens/manualinput_screen.dart';
 

@@ -100,7 +100,7 @@ class Eat {
 
   Eat({required this.date, required this.foodid, required this.eiyo});
   Map<String, dynamic> toMap() {
-    return {'date': date, 'foodid': foodid, 'growth': eiyo};
+    return {'date': date, 'foodid': foodid, 'eiyo': eiyo};
   }
 
   static Future<Database> get database async {
@@ -133,10 +133,12 @@ class Eat {
   //       where: "date = ? AND name = ?", whereArgs: [eat.date, eat.name]);
   // }
 
-  static Future<List<Map<String, dynamic>>> getEat() async {
+  static Future<List<Map<String, dynamic>>> getEat(String date) async {
     Database db = await database;
     //名前が一致する物を返す処理を書く必要がある
-    List<Map<String, Object?>> maps = await db.query("eat");
+    List<Map<String, Object?>> maps = await db.rawQuery(
+        'SELECT date,food.* FROM eat INNER JOIN food ON eat.foodid = food.id WHERE eat.date = ?',
+        [date]);
 
     return maps;
 
@@ -148,6 +150,16 @@ class Eat {
     //     status: maps[i]["status"],
     //   );
     // });
+  }
+
+  static Future<List<Map<String, dynamic>>> getcal(String date) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT food.cal FROM eat INNER JOIN food ON eat.foodid = food.id WHERE eat.date = ?',
+        [date]);
+
+    return maps;
   }
 }
 

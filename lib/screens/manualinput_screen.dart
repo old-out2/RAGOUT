@@ -73,7 +73,7 @@ class ManualInputScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: ManualInputSearch(
-                        nowDate: DateFormat('yyyy/MM//dd').format(nowDate)),
+                        nowDate: DateFormat('yyyy/MM/dd').format(nowDate)),
                   ),
                   SizedBox(
                     height: size.deviceHeight * 0.02,
@@ -233,9 +233,9 @@ class _ManualInputSearchState extends State<ManualInputSearch> {
                 eatfood.add({
                   "date": widget.nowDate,
                   "foodid": suggestion["id"].toString(),
-                  "eiyo": "",
+                  "eiyo": null.toString(),
                 });
-                debugPrint(eatfood.toString());
+                debugPrint(suggestion.toString());
                 // debugPrint(suggestion.toString());
                 _list.add(
                   Slidable(

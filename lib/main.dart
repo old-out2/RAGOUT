@@ -1,9 +1,9 @@
 import 'package:app/importer.dart';
+import 'package:app/models/return.dart';
 import 'package:app/screens/tutorial/tutorial_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:health/health.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,21 +11,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // void _showTutorial(BuildContext context) async {
-  //   final pref = await SharedPreferences.getInstance();
-
-  //   if (pref.getBool('isAlreadyFirstLaunch') != true) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const TutorialScreen(),
-  //         fullscreenDialog: true,
-  //       ),
-  //     );
-  //     pref.setBool('isAlreadyFirstLaunch', true);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +49,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var size = SizeConfig();
+  var list = calorie();
   int _nofSteps = 0;
   double expPoint = 120;
   // 歩数取得用
@@ -130,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     size.init(context);
+
     return Scaffold(
       appBar: AppBar(
         // AppBarを隠す
@@ -196,13 +183,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                     Column(
                       children: [
-                        const Text(
-                          "1234kal",
-                          style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        FutureBuilder(
+                            future: list.callist(),
+                            builder: (context, snapshot) {
+                              return GestureDetector(
+                                  onTap: () {
+                                    setState(() {});
+                                  },
+                                  child: Text(
+                                    list.homecal.toString() + "kal",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ));
+                            }),
                         SizedBox(
                           width: size.deviceWidth * 0.4,
                           child: Image.asset('assets/shelf.png'),
@@ -231,6 +226,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ),
                       ],
                     ),
+                    // const SizedBox(height: 70),
+
+                    // SizedBox(height: 90),
                   ],
                 ),
               ),

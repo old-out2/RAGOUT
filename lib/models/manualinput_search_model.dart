@@ -29,7 +29,7 @@ class ManualInputSearchModel extends ChangeNotifier {
       var SearchList = await Food.getFoods(text);
       SearchList.forEach((element) {
         searchResultList.add({
-          // "id": element.id.toString(),
+          "id": element.id.toString(),
           "name": element.name
               .replaceAll(RegExp("＜.*＞|（.*）|［.*］|" r'\s'), "")
               .trim(),
