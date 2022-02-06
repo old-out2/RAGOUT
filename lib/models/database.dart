@@ -151,6 +151,16 @@ class Eat {
     //   );
     // });
   }
+
+  static Future<List<Map<String, dynamic>>> getcal(String date) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT food.cal FROM eat INNER JOIN food ON eat.foodid = food.id WHERE eat.date = ?',
+        [date]);
+
+    return maps;
+  }
 }
 
 //カロリー消費

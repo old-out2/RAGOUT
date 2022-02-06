@@ -1,4 +1,5 @@
 import 'package:app/importer.dart';
+import 'package:app/models/return.dart';
 import 'package:app/screens/tutorial/tutorial_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -61,7 +62,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
+  var list = calorie();
+  var size = SizeConfig();
 
   @override
   void initState() {
@@ -76,16 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    var size = SizeConfig();
     size.init(context);
+    debugPrint(list.totalcal.toString());
+
     return Scaffold(
       appBar: AppBar(
         // AppBarを隠す
@@ -128,13 +125,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SizedBox(),
                     ),
                     // const SizedBox(height: 70),
-                    const Text(
-                      "1,234kal",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    FutureBuilder(
+                        future: list.callist(),
+                        builder: (context, snapshot) {
+                          return Text(
+                            list.totalcal.toString() + "kal",
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        })
                     // SizedBox(height: 90),
                   ],
                 ),
