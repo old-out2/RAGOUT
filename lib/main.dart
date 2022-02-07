@@ -51,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var list = calorie();
   int _nofSteps = 0;
   double expPoint = 120;
+  // DBから取ってくるようにする
+  int level = 1;
   // 歩数取得用
   HealthFactory health = HealthFactory();
 
@@ -105,6 +107,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
       fetchStepData();
+
+      // 目標を達成してるかどうかの判定処理
+      // code ...
+
     } else if (state == AppLifecycleState.inactive) {
       // アプリの停止時
     } else if (state == AppLifecycleState.detached) {
@@ -144,12 +150,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "経験値",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            const Text(
+                              "経験値  ",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "Lv.$level",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                         Stack(
                           children: [
