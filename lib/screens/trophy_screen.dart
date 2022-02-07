@@ -14,6 +14,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   var nowTitle = "新人戦士";
   @override
   Widget build(BuildContext context) {
+    // DBから取ってくる
     final titles = <String>[
       "新人戦士",
       "街の戦士",
@@ -123,7 +124,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
                     width: size.deviceWidth * 0.01,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {});
+                      Navigator.pop(context);
+                    },
                     child: SizedBox(
                       width: size.deviceWidth * 0.35,
                       child: Image.asset("assets/titlelist_submit.png"),
