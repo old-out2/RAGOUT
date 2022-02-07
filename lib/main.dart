@@ -48,7 +48,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-  var size = SizeConfig();
   var list = calorie();
   int _nofSteps = 0;
   double expPoint = 120;
@@ -80,10 +79,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    var size = SizeConfig();
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     fetchStepData();
-
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
       debugPrint("${prefs.getBool('isFirstLaunch')}");
