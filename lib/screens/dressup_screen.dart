@@ -14,6 +14,16 @@ class TopsClotheData {
   });
 }
 
+class OutersClotheData {
+  final int index;
+  final String outersClothe;
+
+  OutersClotheData({
+    required this.index,
+    required this.outersClothe,
+  });
+}
+
 class BottomsClotheData {
   final int index;
   final String bottomsClothe;
@@ -24,19 +34,33 @@ class BottomsClotheData {
   });
 }
 
+class ShoesClotheData {
+  final int index;
+  final String shoesClothe;
+
+  ShoesClotheData({
+    required this.index,
+    required this.shoesClothe,
+  });
+}
+
 final tops = <String>[
   "dressup_clothe1.png",
   "dressup_clothe2.png",
   "dressup_clothe3.png",
-  "dressup_clothe4.png",
   "dressup_clothe5.png",
   "dressup_clothe6.png",
+];
+final outers = <String>[
+  "dressup_clothe4.png",
   "dressup_clothe7.png",
   "dressup_clothe8.png",
 ];
 final bottoms = <String>[
   "dressup_clothe9.png",
   "dressup_clothe10.png",
+];
+final shoes = <String>[
   "dressup_clothe11.png",
 ];
 
@@ -50,16 +74,29 @@ class DressupScreen extends StatefulWidget {
 var size = SizeConfig();
 
 class _DressupScreenState extends State<DressupScreen> {
-  int _selectedIndex = 0;
+  int _selectedTopsIndex = 0;
+  int _selectedOutersIndex = 0;
+  int _selectedBottomsIndex = 0;
+  int _selectedShoesIndex = 0;
 
   final List<TopsClotheData> topsClothes = [
     for (int i = 0; i < tops.length; i++)
       TopsClotheData(index: i, topsClothe: tops[i], clothingType: "tops")
   ];
 
+  final List<OutersClotheData> outersClothes = [
+    for (int i = 0; i < tops.length; i++)
+      OutersClotheData(index: i, outersClothe: outers[i])
+  ];
+
   final List<BottomsClotheData> bottomsClothes = [
     for (int i = 0; i < bottoms.length; i++)
       BottomsClotheData(index: i, bottomsClothe: bottoms[i])
+  ];
+
+  final List<ShoesClotheData> shoesClothe = [
+    for (int i = 0; i < shoes.length; i++)
+      ShoesClotheData(index: i, shoesClothe: shoes[i])
   ];
 
   @override
@@ -98,7 +135,8 @@ class _DressupScreenState extends State<DressupScreen> {
                               // color: Colors.black.withOpacity(0.3),
                               width: 58,
                               height: 70,
-                              child: Image.asset("assets/dressup_clothe11.png"),
+                              child: Image.asset(
+                                  "assets/${shoesClothe[_selectedShoesIndex].shoesClothe}"),
                             ),
                           ),
                           Center(
@@ -108,27 +146,52 @@ class _DressupScreenState extends State<DressupScreen> {
                               // color: Colors.black.withOpacity(0.3),
                               width: 58,
                               height: 60,
-                              child: Image.asset("assets/dressup_clothe9.png"),
+                              child: Image.asset(
+                                  "assets/${bottomsClothes[_selectedBottomsIndex].bottomsClothe}"),
                             ),
                           ),
                           Center(
                             child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 148, left: 5, bottom: 0, right: 5),
+                              margin: EdgeInsets.only(
+                                  top: (_selectedTopsIndex == 4) ? 133 : 148,
+                                  left: 5,
+                                  bottom: 0,
+                                  right: 5),
                               // color: Colors.black.withOpacity(0.3),
-                              width: 70,
-                              height: 70,
+                              width: (_selectedTopsIndex == 4) ? 80 : 70,
+                              height: (_selectedTopsIndex == 4) ? 100 : 70,
                               child: Image.asset(
-                                  "assets/${topsClothes[_selectedIndex].topsClothe}"),
+                                  "assets/${topsClothes[_selectedTopsIndex].topsClothe}"),
                             ),
                           ),
+                          // Center(
+                          //   child: Container(
+                          //     margin: EdgeInsets.only(
+                          //         top: (_selectedTopsIndex == 4) ? 133 : 148,
+                          //         left: 5,
+                          //         bottom: 0,
+                          //         right: 5),
+                          //     // color: Colors.black.withOpacity(0.3),
+                          //     width: (_selectedOutersIndex == 4) ? 80 : 70,
+                          //     height: (_selectedOutersIndex == 4) ? 100 : 70,
+                          //     child: Image.asset(
+                          //         "assets/${outersClothes[_selectedOutersIndex].outersClothe}"),
+                          //   ),
+                          // ),
                         ],
                       ),
                     );
                   },
                   onAccept: (data) {
                     setState(() {
-                      _selectedIndex = data;
+                      // ifで条件分岐
+                      if (data % 10 == 1) {
+                        _selectedTopsIndex = (data - 1) ~/ 10;
+                      } else if (data % 10 == 2) {
+                        _selectedBottomsIndex = ((data - 2) ~/ 10);
+                      } else if (data % 10 == 3) {
+                        _selectedShoesIndex = ((data - 3) ~/ 10);
+                      }
                     });
                   },
                 ),
@@ -159,6 +222,8 @@ class _DressupScreenState extends State<DressupScreen> {
                       children: [
                         for (var clothe in topsClothes)
                           TopsClothing(data: clothe),
+                        // for (var clothe in outersClothes)
+                        //   OutersClothing(data: clothe),
                       ],
                     ),
                   ),
@@ -175,6 +240,8 @@ class _DressupScreenState extends State<DressupScreen> {
                       children: [
                         for (var clothe in bottomsClothes)
                           BottomsClothing(data: clothe),
+                        for (var clothe in shoesClothe)
+                          ShoesClothing(data: clothe),
                       ],
                     ),
                   ),
@@ -202,7 +269,7 @@ class TopsClothing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Draggable<int>(
-      data: data.index,
+      data: data.index * 10 + 1,
       child: Container(
         margin: EdgeInsets.all(5),
         width: 70,
@@ -226,6 +293,41 @@ class TopsClothing extends StatelessWidget {
   }
 }
 
+class OutersClothing extends StatelessWidget {
+  const OutersClothing({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
+
+  final OutersClotheData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Draggable<int>(
+      data: data.index * 10 + 1,
+      child: Container(
+        margin: EdgeInsets.all(5),
+        width: 70,
+        height: 70,
+        child: Image.asset("assets/${data.outersClothe}"),
+      ),
+      feedback: Container(
+        margin: EdgeInsets.all(5),
+        width: 70,
+        height: 70,
+        child: Image.asset("assets/${data.outersClothe}"),
+      ),
+      childWhenDragging: Container(
+        margin: EdgeInsets.all(5),
+        color: Colors.black.withOpacity(0.3),
+        width: 70,
+        height: 70,
+        child: Image.asset("assets/${data.outersClothe}"),
+      ),
+    );
+  }
+}
+
 class BottomsClothing extends StatelessWidget {
   const BottomsClothing({
     Key? key,
@@ -237,7 +339,7 @@ class BottomsClothing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Draggable<int>(
-      data: data.index,
+      data: data.index * 10 + 2,
       child: Container(
         margin: EdgeInsets.all(5),
         width: 70,
@@ -256,6 +358,41 @@ class BottomsClothing extends StatelessWidget {
         width: 70,
         height: 70,
         child: Image.asset("assets/${data.bottomsClothe}"),
+      ),
+    );
+  }
+}
+
+class ShoesClothing extends StatelessWidget {
+  const ShoesClothing({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
+
+  final ShoesClotheData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Draggable<int>(
+      data: data.index * 10 + 3,
+      child: Container(
+        margin: EdgeInsets.all(5),
+        width: 70,
+        height: 70,
+        child: Image.asset("assets/${data.shoesClothe}"),
+      ),
+      feedback: Container(
+        margin: EdgeInsets.all(5),
+        width: 70,
+        height: 70,
+        child: Image.asset("assets/${data.shoesClothe}"),
+      ),
+      childWhenDragging: Container(
+        margin: EdgeInsets.all(5),
+        color: Colors.black.withOpacity(0.3),
+        width: 70,
+        height: 70,
+        child: Image.asset("assets/${data.shoesClothe}"),
       ),
     );
   }
