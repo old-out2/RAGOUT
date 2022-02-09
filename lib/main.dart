@@ -94,7 +94,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // double kal = totalKal - Database.calculateKal(_nofSteps);
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
-      debugPrint("${prefs.getBool('isFirstLaunch')}");
       if (prefs.getBool('isFirstLaunch') != true) {
         await Navigator.of(context).pushNamed('/tutorial');
       }

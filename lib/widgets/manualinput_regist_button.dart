@@ -1,7 +1,6 @@
 import 'package:app/importer.dart';
-import 'package:app/models/return.dart';
-import 'package:app/screens/eatlist.dart';
 import 'package:app/screens/manualinput_screen.dart';
+import 'package:app/screens/dialog.dart';
 
 class ManualInputRegistButton extends StatelessWidget {
   const ManualInputRegistButton({
@@ -12,12 +11,8 @@ class ManualInputRegistButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: TextButton(
-        onPressed: () async {
-          await Eat.insertEat(eatfood);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => EatList()),
-          );
+        onPressed: () {
+          CustomDialog(context).showCustomDialog(totalcal);
         },
         child: Image.asset(
           'assets/manualinput_regist.png',

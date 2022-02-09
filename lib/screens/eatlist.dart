@@ -9,20 +9,17 @@ class EatList extends StatefulWidget {
 class _EatListState extends State<EatList> {
   List<Map<String, dynamic>> list = [];
   @override
-  void initState() {
-    Future(() async {
-      list = await Eat.getEat(DateFormat('yyyy/MM/dd').format(DateTime.now()));
-    });
-    super.initState();
-  }
+  // void initState() {
+  //   Future(() async {
+  //     list = await Eat.getEat(DateFormat('yyyy/MM/dd').format(DateTime.now()));
+  //   });
+  //   super.initState();
+  // }
 
   Future _loadData() async {
     //Future.delay()を使用して擬似的に非同期処理を表現
     await Future.delayed(Duration(seconds: 2));
     list = await Eat.getEat(DateFormat('yyyy/MM/dd').format(DateTime.now()));
-    setState(() {
-      list.toString();
-    });
   }
 
   @override
@@ -37,16 +34,16 @@ class _EatListState extends State<EatList> {
           iconTheme: const IconThemeData(color: Colors.black),
         ),
         extendBodyBehindAppBar: true,
-        body: RefreshIndicator(
-            onRefresh: () async {
-              await _loadData();
-            },
-            child: ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, index) {
-                  return Card(
-                    child: ListTile(title: Text(list[index].toString())),
-                  );
-                })));
+        body: FutureBuilder(
+            future: _loadData(),
+            builder: (context, snapshot) {
+              return ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, index) {
+                    return Card(
+                      child: ListTile(title: Text(list[index].toString())),
+                    );
+                  });
+            }));
   }
 }
