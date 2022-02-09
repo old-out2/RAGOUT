@@ -48,13 +48,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  int widgetIndex = 1;
+  bool _consumeCalVisible = false;
+  bool _bornCalVisible = true;
   var list = calorie();
+  int showSection = 1;
   int _nofSteps = 0;
   double expPoint = 120;
   // DBから取ってくるようにする
   int level = 1;
   // 歩数取得用
   HealthFactory health = HealthFactory();
+
+  Future checkBurnCalories() async {}
 
   Future fetchStepData() async {
     int? steps;
@@ -83,14 +89,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     var size = SizeConfig();
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
     fetchStepData();
+    WidgetsBinding.instance?.addObserver(this);
+    // double kal = totalKal - Database.calculateKal(_nofSteps);
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
       debugPrint("${prefs.getBool('isFirstLaunch')}");
       if (prefs.getBool('isFirstLaunch') != true) {
         await Navigator.of(context).pushNamed('/tutorial');
       }
+    });
+    Future.delayed(Duration(seconds: 5), () {
+      changeWidget(_bornCalVisible, _consumeCalVisible);
     });
   }
 
@@ -119,8 +129,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   @override
+  // void changeWidget(int widgetIndex) {
+  //   print(widgetIndex);
+  //   if (widgetIndex == 0) {
+  //     widgetIndex = 1;
+  //   } else if (widgetIndex == 1) {
+  //     widgetIndex = 0;
+  //   }
+  //   // Future.delayed(Duration(seconds: 5), () {
+  //   //   changeWidget(widgetIndex);
+  //   // });
+  // }
+  void changeWidget(bool bornCalVisible, bool consumeCalVisible) {
+    // print(visible);
+    setState(() {
+      _bornCalVisible = !bornCalVisible;
+      _consumeCalVisible = !consumeCalVisible;
+    });
+    Future.delayed(Duration(seconds: 5), () {
+      changeWidget(_bornCalVisible, _consumeCalVisible);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     size.init(context);
+    List<Widget> showWidget = [
+      TodaysBornCalories(list: list),
+      TodaysConsumedCalories(list: list),
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -141,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                margin: EdgeInsets.only(left: 28),
+                margin: const EdgeInsets.only(left: 28),
                 alignment: Alignment.centerLeft,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,23 +234,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         // ),
                       ],
                     ),
+                    // Visibility(
+                    //   visible: _visible,
+                    //   child: showWidget[widgetIndex],
+                    // ),
                     Column(
                       children: [
-                        FutureBuilder(
-                            future: list.callist(),
-                            builder: (context, snapshot) {
-                              return GestureDetector(
-                                  onTap: () {
-                                    setState(() {});
-                                  },
-                                  child: Text(
-                                    list.homecal.toString() + "kal",
-                                    style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ));
-                            }),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            AnimatedOpacity(
+                              opacity: _bornCalVisible ? 0.0 : 1.0,
+                              duration: Duration(milliseconds: 300),
+                              child: showWidget[0],
+                            ),
+                            AnimatedOpacity(
+                              opacity: _consumeCalVisible ? 0.0 : 1.0,
+                              duration: Duration(milliseconds: 300),
+                              child: showWidget[1],
+                            ),
+                          ],
+                        ),
                         SizedBox(
                           width: size.deviceWidth * 0.4,
                           child: Image.asset('assets/shelf.png'),
@@ -268,6 +309,88 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
       ),
+    );
+  }
+}
+
+class TodaysConsumedCalories extends StatelessWidget {
+  const TodaysConsumedCalories({
+    Key? key,
+    required this.list,
+  }) : super(key: key);
+
+  final calorie list;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          "今日の摂取カロリー",
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        FutureBuilder(
+          future: list.callist(),
+          builder: (context, snapshot) {
+            return GestureDetector(
+              // onTap: () {
+              //   setState(() {});
+              // },
+              child: Text(
+                "${(list.homecal ~/ 1).toString()}kal",
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class TodaysBornCalories extends StatelessWidget {
+  const TodaysBornCalories({
+    Key? key,
+    required this.list,
+  }) : super(key: key);
+
+  final calorie list;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          "今日の残り消費カロリー",
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        FutureBuilder(
+          future: list.callist(),
+          builder: (context, snapshot) {
+            return GestureDetector(
+              // onTap: () {
+              //   setState(() {});
+              // },
+              child: Text(
+                "1303kal",
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
