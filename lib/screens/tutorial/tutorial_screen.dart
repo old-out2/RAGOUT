@@ -31,6 +31,9 @@ class _TutorialState extends State<TutorialScreen> {
     size.init(context);
     DateTime nowDate = DateTime.now();
     String date = DateFormat('yyyy年MM月dd日').format(nowDate);
+    Future(() async {
+      await Food.insertFood();
+    });
 
     void gendar() async {
       final pref = await SharedPreferences.getInstance();
@@ -45,6 +48,7 @@ class _TutorialState extends State<TutorialScreen> {
 
     //チュートリアルを行った判定を保存
     void _showTutorial(BuildContext context) async {
+      print("run showTutorial");
       final pref = await SharedPreferences.getInstance();
       pref.setBool('isFirstLaunch', true);
     }
@@ -415,10 +419,11 @@ class _TutorialState extends State<TutorialScreen> {
                   ),
                   onPressed: () async {
                     _showTutorial(context);
+                    Food.insertFood();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => HomeScreen(title: 'RAGOUT')),
+                          builder: (context) => HomeScreen(title: "RAGOUT")),
                     );
                   }),
             )
