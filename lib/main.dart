@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:app/importer.dart';
 import 'package:app/models/return.dart';
 import 'package:app/screens/tutorial/tutorial_screen.dart';
@@ -116,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
       fetchStepData();
+      showStepsDialog();
 
       // 目標を達成してるかどうかの判定処理
       // code ...
@@ -137,6 +140,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Future.delayed(Duration(seconds: 5), () {
       changeWidget(_bornCalVisible, _consumeCalVisible);
     });
+  }
+
+  @override
+  void showStepsDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          child: CheckCalDialog(name: "にの", steps: 387),
+        );
+      },
+    );
   }
 
   @override
@@ -379,6 +397,69 @@ class TodaysBornCalories extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class CheckCalDialog extends StatefulWidget {
+  CheckCalDialog({
+    Key? key,
+    required this.name,
+    required this.steps,
+  }) : super(key: key);
+
+  String name;
+  int steps;
+
+  @override
+  State<CheckCalDialog> createState() => _CheckCalDialogState();
+}
+
+class _CheckCalDialogState extends State<CheckCalDialog> {
+  int targetSteps = 3000;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.deviceWidth * 0.7,
+      height: size.deviceHeight * 0.3,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset("assets/check_cal_dialog.png"),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: size.deviceWidth * 0.6,
+                child: Text(
+                  "${widget.name}さんがアプリを起動していない間に${widget.steps}歩きました!\n残り${targetSteps - widget.steps}歩です!",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  setState(() {
+                    // ホーム画面の変数に反映する
+                    // DB更新？はいらなさそう
+                  });
+                  Navigator.pop(context);
+                  // ホーム画面に反映させるために
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 20),
+                  width: size.deviceWidth * 0.12,
+                  child: Image.asset("assets/checkcal_ok_button.png"),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
