@@ -22,8 +22,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
-        // '/': (context) => const HomeScreen(title: 'RAGOUT'),
-        '/': (context) => const TutorialScreen(),
+        '/': (context) => const HomeScreen(title: 'RAGOUT'),
         '/tutorial': (BuildContext context) => const TutorialScreen(),
       },
       // ここを追加する。
