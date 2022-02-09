@@ -4,20 +4,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class calorie {
   double homecal = 0;
+//ホーム画面のカロリー表示
   callist() async {
-    double totalcal = 0;
-    var callist =
-        await Eat.getcal(DateFormat('yyyy/MM/dd').format(DateTime.now()));
-    for (var element in callist) {
-      totalcal += element["cal"];
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('isFirstLaunch') == true) {
+      double totalcal = 0;
+      var callist =
+          await Eat.getcal(DateFormat('yyyy/MM/dd').format(DateTime.now()));
+      for (var element in callist) {
+        totalcal += element["cal"];
+      }
+      homecal = totalcal;
     }
-
-    // final pref = await SharedPreferences.getInstance();
-
-    // if (pref.getDouble('kcal') == null || pref.getDouble('kcal')! < totalcal) {
-    //   pref.setDouble('kcal', totalcal);
-
-    // }
-    homecal = totalcal;
   }
 }
