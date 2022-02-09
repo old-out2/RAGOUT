@@ -256,9 +256,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   // クリーム入り背景：#FFF1BC
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       GrowthButton(),
-                      TrophyButton(),
+                      TrophyButton(
+                        onSave: (newTitle) {
+                          setState(() {
+                            title = newTitle;
+                          });
+                        },
+                      ),
                       BattleButton(),
                     ],
                   ),

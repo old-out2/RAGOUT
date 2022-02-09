@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import '../size_config.dart';
 
 class TrophyScreen extends StatefulWidget {
-  TrophyScreen({Key? key}) : super(key: key);
+  TrophyScreen({
+    Key? key,
+    required this.onSave,
+  }) : super(key: key);
+
+  void Function(String nowTitle) onSave;
 
   @override
   _TrophyScreenState createState() => _TrophyScreenState();
@@ -125,7 +130,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {});
+                      widget.onSave(nowTitle);
                       Navigator.pop(context);
                     },
                     child: SizedBox(
