@@ -1,5 +1,6 @@
 import 'package:app/importer.dart';
 import 'package:app/main.dart';
+import 'package:app/models/return.dart';
 import 'package:app/screens/manualinput_screen.dart';
 
 class DialogRegistButton extends StatelessWidget {
@@ -16,6 +17,7 @@ class DialogRegistButton extends StatelessWidget {
         child: TextButton(
           onPressed: () async {
             await Eat.insertEat(eatfood);
+            calorie().totalcal();
             Navigator.push(
               context,
               MaterialPageRoute(

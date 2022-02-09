@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
-import 'dart:async';
 import 'package:path/path.dart';
 
 import '../importer.dart';
@@ -44,13 +43,24 @@ class Food {
       join(await getDatabasesPath(), 'food_database.db'),
       onCreate: (db, version) async {
         await db.execute(
+          //食品データベース
           "CREATE TABLE food(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
         await db.execute(
+          //食べた物のデータベース
           "CREATE TABLE eat(date TEXT, foodid INTEGER, eiyo TEXT ,FOREIGN KEY(foodid) REFERENCES food(id))",
         );
         await db.execute(
+          //一日の合計のデータベース
+          "CREATE TABLE total(date TEXT PRIMARY KEY, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
+        );
+        await db.execute(
+          //ステータス
           "CREATE TABLE status(date TEXT PRIMARY KEY, growth INTEGER, status TEXT)",
+        );
+        await db.execute(
+          //トロフィー
+          "CREATE TABLE trophy(name TEXT, permission BOOLEAN)",
         );
       },
       version: 1,
@@ -118,38 +128,15 @@ class Eat {
       await db.insert('eat', element,
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
-    // for (var item in jsonArray) {
-    //   await db.insert(
-    //     'status',
-    //     item,
-    //     conflictAlgorithm: ConflictAlgorithm.replace,
-    //   );
-    // }
   }
-
-  // static Future<void> updateEat(Eat eat) async {
-  //   Database db = await database;
-  //   await db.update('eat', eat.toMap(),
-  //       where: "date = ? AND name = ?", whereArgs: [eat.date, eat.name]);
-  // }
 
   static Future<List<Map<String, dynamic>>> getEat(String date) async {
     Database db = await database;
-    //名前が一致する物を返す処理を書く必要がある
     List<Map<String, Object?>> maps = await db.rawQuery(
         'SELECT date,food.* FROM eat INNER JOIN food ON eat.foodid = food.id WHERE eat.date = ?',
         [date]);
 
     return maps;
-
-    // return List.generate(maps.length, (i) {
-    //   return Eat(
-    //     date: maps[i]["date"],
-    //     name: maps[i]["name"],
-    //     growth: maps[i]["growth"],
-    //     status: maps[i]["status"],
-    //   );
-    // });
   }
 
   static Future<List<Map<String, dynamic>>> getcal(String date) async {
@@ -163,7 +150,6 @@ class Eat {
   }
 }
 
-//カロリー消費
 //ステータス
 class Status {
   String date;
@@ -185,8 +171,6 @@ class Status {
   }
 
   static Future<void> insertStatus() async {
-    // String loadData = await rootBundle.loadString('json/food.json');
-    // List<dynamic> jsonArray = jsonDecode(loadData);
     var test = {
       "date": "2021/01/01",
       "growth": 100,
@@ -223,5 +207,40 @@ class Status {
         status: maps[i]["status"],
       );
     });
+  }
+}
+
+//一日の合計カロリー
+class total {
+  static Future<Database> get database async {
+    Future<Database> _database = openDatabase(
+      join(await getDatabasesPath(), 'food_database.db'),
+      version: 1,
+    );
+    return _database;
+  }
+
+  static insertTotal(Map<String, String> total) async {
+    Database db = await database;
+
+    await db.insert('total', total,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static updateTotal(Map<String, String> total) async {
+    Database db = await database;
+
+    await db.update('total', total,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<List<Map<String, dynamic>>> getTotal(String date) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT cal, protein, lipids,carb,mineral,bitamin FROM total WHERE date = ?',
+        [date]);
+
+    return maps;
   }
 }

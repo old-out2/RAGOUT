@@ -56,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
-      debugPrint("${prefs.getBool('isFirstLaunch')}");
       if (prefs.getBool('isFirstLaunch') != true) {
         await Navigator.of(context).pushNamed('/tutorial');
       }
