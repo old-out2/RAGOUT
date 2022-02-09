@@ -117,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // アプリがバックグラウンドに行ったとき
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
-      fetchStepData();
       showStepsDialog();
+      fetchStepData();
 
       // 目標を達成してるかどうかの判定処理
       // code ...
@@ -130,7 +130,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  @override
   void changeWidget(bool bornCalVisible, bool consumeCalVisible) {
     // print(visible);
     setState(() {
@@ -142,8 +141,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
-  @override
   void showStepsDialog() {
+    print("run shoeStepsDialog");
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -346,7 +345,7 @@ class TodaysConsumedCalories extends StatelessWidget {
               //   setState(() {});
               // },
               child: Text(
-                "${(list.homecal ~/ 1).toString()}kal",
+                "${(list.homecal ~/ 1).toString()}kcal",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -387,7 +386,7 @@ class TodaysBornCalories extends StatelessWidget {
               //   setState(() {});
               // },
               child: Text(
-                "1303kal",
+                "1303kcal",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
