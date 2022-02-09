@@ -45,9 +45,9 @@ class ShoesClotheData {
 }
 
 final tops = <String>[
+  "dressup_clothe3.png",
   "dressup_clothe1.png",
   "dressup_clothe2.png",
-  "dressup_clothe3.png",
   "dressup_clothe5.png",
   "dressup_clothe6.png",
 ];
@@ -57,11 +57,12 @@ final outers = <String>[
   "dressup_clothe8.png",
 ];
 final bottoms = <String>[
-  "dressup_clothe9.png",
   "dressup_clothe10.png",
+  "dressup_clothe9.png",
 ];
 final shoes = <String>[
   "dressup_clothe11.png",
+  "dressup_clothe12.png",
 ];
 
 class DressupScreen extends StatefulWidget {
@@ -84,10 +85,10 @@ class _DressupScreenState extends State<DressupScreen> {
       TopsClotheData(index: i, topsClothe: tops[i], clothingType: "tops")
   ];
 
-  final List<OutersClotheData> outersClothes = [
-    for (int i = 0; i < tops.length; i++)
-      OutersClotheData(index: i, outersClothe: outers[i])
-  ];
+  // final List<OutersClotheData> outersClothes = [
+  //   for (int i = 0; i < tops.length; i++)
+  //     OutersClotheData(index: i, outersClothe: outers[i])
+  // ];
 
   final List<BottomsClotheData> bottomsClothes = [
     for (int i = 0; i < bottoms.length; i++)
@@ -238,10 +239,9 @@ class _DressupScreenState extends State<DressupScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        for (var clothe in bottomsClothes)
-                          BottomsClothing(data: clothe),
-                        for (var clothe in shoesClothe)
-                          ShoesClothing(data: clothe),
+                        for (var bottom in bottomsClothes)
+                          BottomsClothing(data: bottom),
+                        for (var shoe in shoesClothe) ShoesClothing(data: shoe),
                       ],
                     ),
                   ),
