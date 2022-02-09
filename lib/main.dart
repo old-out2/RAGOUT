@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   double expPoint = 120;
   // DBから取ってくるようにする
   int level = 1;
+  String title = "新人戦士";
   // 歩数取得用
   HealthFactory health = HealthFactory();
 
@@ -272,7 +273,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       ],
                     ),
                     // const SizedBox(height: 70),
-
                     // SizedBox(height: 90),
                   ],
                 ),
@@ -280,16 +280,41 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      SizedBox(
+                        width: 180,
+                        child: Image.asset("assets/titlelist_frame.png"),
+                      ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      )
+                    ],
+                  ),
                   const AvatarButton(),
                   // 白い背景：#F2F2F2
                   // クリーム入り背景：#FFF1BC
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       GrowthButton(),
-                      TrophyButton(),
+                      TrophyButton(
+                        onSave: (newTitle) {
+                          setState(() {
+                            title = newTitle;
+                          });
+                        },
+                      ),
                       BattleButton(),
                     ],
+                  ),
+                  SizedBox(
+                    height: 15,
                   ),
                 ],
               ),

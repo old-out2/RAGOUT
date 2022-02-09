@@ -7,7 +7,10 @@ var size = SizeConfig();
 class TrophyButton extends StatelessWidget {
   const TrophyButton({
     Key? key,
+    required this.onSave,
   }) : super(key: key);
+
+  final void Function(String nowTitle) onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class TrophyButton extends StatelessWidget {
               return Dialog(
                 insetPadding: EdgeInsets.zero,
                 backgroundColor: Colors.transparent,
-                child: TrophyScreen(),
+                child: TrophyScreen(onSave: onSave),
               );
             },
           );

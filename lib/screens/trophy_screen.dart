@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import '../size_config.dart';
 
 class TrophyScreen extends StatefulWidget {
-  TrophyScreen({Key? key}) : super(key: key);
+  TrophyScreen({
+    Key? key,
+    required this.onSave,
+  }) : super(key: key);
+
+  void Function(String nowTitle) onSave;
 
   @override
   _TrophyScreenState createState() => _TrophyScreenState();
@@ -14,6 +19,7 @@ class _TrophyScreenState extends State<TrophyScreen> {
   var nowTitle = "新人戦士";
   @override
   Widget build(BuildContext context) {
+    // DBから取ってくる
     final titles = <String>[
       "新人戦士",
       "街の戦士",
@@ -123,7 +129,10 @@ class _TrophyScreenState extends State<TrophyScreen> {
                     width: size.deviceWidth * 0.01,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      widget.onSave(nowTitle);
+                      Navigator.pop(context);
+                    },
                     child: SizedBox(
                       width: size.deviceWidth * 0.35,
                       child: Image.asset("assets/titlelist_submit.png"),
