@@ -20,7 +20,27 @@ class calorie {
   }
 
   //標準の消費カロリー
-  consume() async {
+  // consume() async{
+  //    final pref = await SharedPreferences.getInstance();
+  //   var height = pref.getString('height');
+  //   var weight = pref.getString('weight');
+
+  //   //歩幅(cm) = 身長 × 0.45
+  //   var stride = int.parse(height!);
+
+  //   //１日の歩数合計 = 歩行距離 ÷ 歩幅(m)
+  //   var steps = 4400 / stride;
+
+  //   //標準の消費カロリー
+  //   var defaultcal = 1.05 * 3 * 1.1 * int.parse(weight!);
+
+  //   //一歩に対するカロリー
+  //   var onestep = defaultcal / steps;
+
+  // }
+
+  //歩いた歩数から消費カロリーを差し引いた残り
+  calculateKal(int nofSteps) async {
     final pref = await SharedPreferences.getInstance();
     var height = pref.getString('height');
     var weight = pref.getString('weight');
@@ -32,10 +52,17 @@ class calorie {
     var steps = 4400 / stride;
 
     //標準の消費カロリー
-    var consume = 1.05 * 3 * 1.1 * int.parse(weight!);
+    var defaultcal = 1.05 * 3 * 1.1 * int.parse(weight!);
 
     //一歩に対するカロリー
-    var onestep = consume / steps;
+    var onestep = defaultcal / steps;
+
+    //歩いた分の消費カロリー
+    var calculate = onestep * nofSteps;
+    print("onestep: " + onestep.toString());
+    //一日の消費カロリーから引いて残った分を返す
+    var residue = defaultcal - calculate;
+    return residue;
   }
 
   //一日の合計カロリーと栄養をを算出する
