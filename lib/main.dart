@@ -129,17 +129,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   @override
-  // void changeWidget(int widgetIndex) {
-  //   print(widgetIndex);
-  //   if (widgetIndex == 0) {
-  //     widgetIndex = 1;
-  //   } else if (widgetIndex == 1) {
-  //     widgetIndex = 0;
-  //   }
-  //   // Future.delayed(Duration(seconds: 5), () {
-  //   //   changeWidget(widgetIndex);
-  //   // });
-  // }
   void changeWidget(bool bornCalVisible, bool consumeCalVisible) {
     // print(visible);
     setState(() {
