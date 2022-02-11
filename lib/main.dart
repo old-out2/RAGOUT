@@ -89,14 +89,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void init() async {
     defaultKcal = await list.calculateDefaultKcal();
-    _nofSteps = await fetchStepData();
+    // _nofSteps = await fetchStepData();
   }
 
   @override
   void initState() {
     var size = SizeConfig();
     super.initState();
-    init();
     WidgetsBinding.instance?.addObserver(this);
     // double kal = totalKal - Database.calculateKcal(_nofSteps);
 
@@ -104,6 +103,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       var prefs = await SharedPreferences.getInstance();
       if (prefs.getBool('isFirstLaunch') != true) {
         await Navigator.of(context).pushNamed('/tutorial');
+      } else {
+        init();
       }
     });
 
@@ -124,7 +125,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // アプリがバックグラウンドに行ったとき
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
-      int nowSteps = await fetchStepData();
+      // int nowSteps = await fetchStepData();
+      int nowSteps = 100;
       print("nowSteps: $nowSteps");
       final int backgroundSteps = nowSteps - _nofSteps;
       print("backgroundSteps: $backgroundSteps");
