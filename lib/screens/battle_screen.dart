@@ -11,7 +11,7 @@ class _BattleScreenState extends State<BattleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: EnemyTwo(),
+      body: EnemyOne(),
     );
   }
 }
@@ -36,48 +36,139 @@ class EnemyOne extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                height: size.deviceHeight * 0.15,
-                child: Image.asset("assets/battle_enemy1.png"),
+              Column(
+                children: [
+                  Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 13),
+                        color: Colors.black,
+                        width: 75,
+                        height: 10,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 13),
+                        color: Colors.orange,
+                        width: 50,
+                        height: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 100,
+                        child: Image.asset("assets/battle_lifepoint.png"),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    height: size.deviceHeight * 0.15,
+                    child: Image.asset("assets/battle_enemy1.png"),
+                  ),
+                ],
               ),
               SizedBox(width: size.deviceWidth * 0.2),
-              SizedBox(
-                height: size.deviceHeight * 0.2,
-                child: Image.asset("assets/battle_avatar.png"),
+              Column(
+                children: [
+                  Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 13),
+                        color: Colors.black,
+                        width: 75,
+                        height: 10,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 13),
+                        color: Colors.orange,
+                        width: 50,
+                        height: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 100,
+                        child: Image.asset("assets/battle_lifepoint.png"),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    height: size.deviceHeight * 0.2,
+                    child: Image.asset("assets/battle_avatar.png"),
+                  ),
+                ],
               ),
             ],
           ),
-          SizedBox(height: size.deviceHeight * 0.1),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_attack.png"),
+          SizedBox(height: size.deviceHeight * 0.07),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black38,
+              border: Border.all(
+                color: Colors.black,
+                width: 3,
               ),
-              const SizedBox(width: 15),
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_masic.png"),
-              ),
-            ],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin:
+                const EdgeInsets.only(top: 20, left: 30, bottom: 80, right: 30),
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        print("Attack!");
+                      },
+                      child: SizedBox(
+                        width: size.deviceWidth * 0.35,
+                        child: Image.asset("assets/battle_attack.png"),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    GestureDetector(
+                      onTap: () {
+                        print("Masic!");
+                      },
+                      child: SizedBox(
+                        width: size.deviceWidth * 0.35,
+                        child: Image.asset("assets/battle_masic.png"),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        print("Use the item!");
+                      },
+                      child: SizedBox(
+                        width: size.deviceWidth * 0.35,
+                        child: Image.asset("assets/battle_item.png"),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    GestureDetector(
+                      onTap: () {
+                        print("Escape...");
+                      },
+                      child: SizedBox(
+                        width: size.deviceWidth * 0.35,
+                        child: Image.asset("assets/battle_escape.png"),
+                      ),
+                    ),
+                  ],
+                ),
+                // const SizedBox(height: 40),
+              ],
+            ),
           ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_item.png"),
-              ),
-              const SizedBox(width: 15),
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_escape.png"),
-              ),
-            ],
-          ),
-          const SizedBox(height: 40),
         ],
       ),
     );
