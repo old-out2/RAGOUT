@@ -127,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       int nowSteps = await fetchStepData();
       print("nowSteps: $nowSteps");
       final int backgroundSteps = nowSteps - _nofSteps;
+      _nofSteps = nowSteps;
       print("backgroundSteps: $backgroundSteps");
       final defaultKcal = await list.calculateDefaultKcal();
       print("defaultKcal: $defaultKcal");
