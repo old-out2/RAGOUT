@@ -17,7 +17,7 @@ class DialogRegistButton extends StatelessWidget {
         child: TextButton(
           onPressed: () async {
             await Eat.insertEat(eatfood);
-            calorie().totalcal();
+            Calorie().totalcal();
             Navigator.push(
               context,
               MaterialPageRoute(

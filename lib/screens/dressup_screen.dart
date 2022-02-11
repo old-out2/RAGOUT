@@ -45,7 +45,7 @@ class ShoesClotheData {
 }
 
 final tops = <String>[
-  "dressup_clothe3.png",
+  "dressup_clothe14.png",
   "dressup_clothe1.png",
   "dressup_clothe2.png",
   "dressup_clothe5.png",
@@ -57,6 +57,7 @@ final outers = <String>[
   "dressup_clothe8.png",
 ];
 final bottoms = <String>[
+  "dressup_clothe13.png",
   "dressup_clothe10.png",
   "dressup_clothe9.png",
 ];
@@ -118,7 +119,7 @@ class _DressupScreenState extends State<DressupScreen> {
               children: [
                 Center(
                   child: SizedBox(
-                    width: size.deviceWidth * 0.45,
+                    width: size.deviceWidth * 0.407,
                     child: Image.asset(
                       'assets/dressup_avatar.png',
                     ),
@@ -154,7 +155,7 @@ class _DressupScreenState extends State<DressupScreen> {
                           Center(
                             child: Container(
                               margin: EdgeInsets.only(
-                                  top: (_selectedTopsIndex == 4) ? 133 : 148,
+                                  top: (_selectedTopsIndex == 4) ? 133 : 148, //
                                   left: 5,
                                   bottom: 0,
                                   right: 5),

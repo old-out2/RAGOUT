@@ -23,7 +23,7 @@ class CustomDialog {
                   "assets/dialog.png",
                   fit: BoxFit.fitWidth,
                 ),
-                Container(
+                SizedBox(
                     height: 200.0,
                     child: Center(
                       child: Column(
@@ -53,7 +53,7 @@ class CustomDialog {
                               locale: Locale("ja", "JP"),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           /*
                            * OKボタン
                            */

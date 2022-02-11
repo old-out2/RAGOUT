@@ -121,7 +121,7 @@ class FiveMajorNutrientsChart extends StatelessWidget {
           ),
         ),
         RadarChart(
-          values: [1, 2, 4, 7, 9],
+          values: [30, 14, 10, 18, 20],
           labels: ["", "", "", "", ""],
           maxValue: 50,
           fillColor: Colors.blue,

@@ -53,9 +53,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int widgetIndex = 1;
   bool _consumeCalVisible = false;
   bool _bornCalVisible = true;
-  var list = calorie();
+  var list = Calorie();
   int showSection = 1;
   int _nofSteps = 0;
+  int defaultKcal = 0;
   double expPoint = 120;
   // DBから取ってくるようにする
   int level = 1;
@@ -80,27 +81,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       print('Total number of steps: $steps');
 
-      setState(() {
-        _nofSteps = (steps == null) ? 0 : steps;
-      });
+      return steps;
     } else {
       print("Authorization not granted");
     }
+  }
+
+  void init() async {
+    defaultKcal = await list.calculateDefaultKcal();
+    _nofSteps = await fetchStepData();
   }
 
   @override
   void initState() {
     var size = SizeConfig();
     super.initState();
-    fetchStepData();
+    init();
     WidgetsBinding.instance?.addObserver(this);
-    // double kal = totalKal - Database.calculateKal(_nofSteps);
+    // double kal = totalKal - Database.calculateKcal(_nofSteps);
+
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
       if (prefs.getBool('isFirstLaunch') != true) {
         await Navigator.of(context).pushNamed('/tutorial');
       }
     });
+
     Future.delayed(Duration(seconds: 5), () {
       changeWidget(_bornCalVisible, _consumeCalVisible);
     });
@@ -113,17 +119,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.paused) {
       // アプリがバックグラウンドに行ったとき
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
-      showStepsDialog();
-      fetchStepData();
+      int nowSteps = await fetchStepData();
+      print("nowSteps: $nowSteps");
+      final int backgroundSteps = nowSteps - _nofSteps;
+      print("backgroundSteps: $backgroundSteps");
+      final defaultKcal = await list.calculateDefaultKcal();
+      print("defaultKcal: $defaultKcal");
+      final tagetSteps = await list.calculateTargetSteps();
+      print("tagetSteps: $tagetSteps");
 
       // 目標を達成してるかどうかの判定処理
-      // code ...
-
+      if (tagetSteps - nowSteps <= 0) {
+        // 目標達成処理
+        showGoalAchievementDialog(nowSteps, backgroundSteps, defaultKcal);
+      } else if (tagetSteps - nowSteps > 0) {
+        // バックグラウンド起動中にどれだけ歩いたか表示
+        showStepsDialog(nowSteps, backgroundSteps, defaultKcal, tagetSteps);
+      }
     } else if (state == AppLifecycleState.inactive) {
       // アプリの停止時
     } else if (state == AppLifecycleState.detached) {
@@ -142,7 +159,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
   }
 
-  void showStepsDialog() {
+  void showStepsDialog(
+      int nowSteps, int backgroundSteps, int defaultKcal, int tagetSteps) {
     print("run shoeStepsDialog");
     showDialog(
       barrierDismissible: false,
@@ -151,7 +169,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return Dialog(
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          child: CheckCalDialog(name: "にの", steps: 387),
+          child: CheckCalDialog(
+            name: "にの",
+            backgroundSteps: backgroundSteps,
+            nowSteps: nowSteps,
+            tagetSteps: tagetSteps,
+          ),
+        );
+      },
+    );
+  }
+
+  void showGoalAchievementDialog(
+      int nowSteps, int backgroundSteps, int defaultKcal) {
+    print("run showGoalAchievement");
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          child: GoalAchievementDialog(
+            name: "にの",
+            backgroundSteps: backgroundSteps,
+            nowSteps: nowSteps,
+          ),
         );
       },
     );
@@ -161,7 +204,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     size.init(context);
     List<Widget> showWidget = [
-      TodaysBornCalories(list: list),
+      TodaysBornCalories(
+        list: list,
+        totalSteps: _nofSteps,
+        defaultKcal: defaultKcal,
+      ),
       TodaysConsumedCalories(list: list),
     ];
 
@@ -349,7 +396,7 @@ class TodaysConsumedCalories extends StatelessWidget {
     required this.list,
   }) : super(key: key);
 
-  final calorie list;
+  final Calorie list;
 
   @override
   Widget build(BuildContext context) {
@@ -388,9 +435,13 @@ class TodaysBornCalories extends StatelessWidget {
   const TodaysBornCalories({
     Key? key,
     required this.list,
+    required this.totalSteps,
+    required this.defaultKcal,
   }) : super(key: key);
 
-  final calorie list;
+  final Calorie list;
+  final int totalSteps;
+  final int defaultKcal;
 
   @override
   Widget build(BuildContext context) {
@@ -411,7 +462,7 @@ class TodaysBornCalories extends StatelessWidget {
               //   setState(() {});
               // },
               child: Text(
-                "1303kcal",
+                "${defaultKcal}kcal",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -429,19 +480,21 @@ class CheckCalDialog extends StatefulWidget {
   CheckCalDialog({
     Key? key,
     required this.name,
-    required this.steps,
+    required this.backgroundSteps,
+    required this.nowSteps,
+    required this.tagetSteps,
   }) : super(key: key);
 
   String name;
-  int steps;
+  int backgroundSteps;
+  int nowSteps;
+  int tagetSteps;
 
   @override
   State<CheckCalDialog> createState() => _CheckCalDialogState();
 }
 
 class _CheckCalDialogState extends State<CheckCalDialog> {
-  int targetSteps = 3000;
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -457,7 +510,7 @@ class _CheckCalDialogState extends State<CheckCalDialog> {
               SizedBox(
                 width: size.deviceWidth * 0.6,
                 child: Text(
-                  "${widget.name}さんがアプリを起動していない間に${widget.steps}歩きました!\n残り${targetSteps - widget.steps}歩です!",
+                  "${widget.name}さんがアプリを起動していない間に${widget.backgroundSteps}歩きました!\n残り${widget.tagetSteps - widget.nowSteps}歩です!",
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -469,10 +522,70 @@ class _CheckCalDialogState extends State<CheckCalDialog> {
                 onPressed: () async {
                   setState(() {
                     // ホーム画面の変数に反映する
-                    // DB更新？はいらなさそう
                   });
                   Navigator.pop(context);
-                  // ホーム画面に反映させるために
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 20),
+                  width: size.deviceWidth * 0.12,
+                  child: Image.asset("assets/checkcal_ok_button.png"),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GoalAchievementDialog extends StatefulWidget {
+  GoalAchievementDialog({
+    Key? key,
+    required this.name,
+    required this.backgroundSteps,
+    required this.nowSteps,
+  }) : super(key: key);
+
+  String name;
+  int backgroundSteps;
+  int nowSteps;
+
+  @override
+  State<GoalAchievementDialog> createState() => _GoalAchievementDialogState();
+}
+
+class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
+  int targetSteps = 3000;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.deviceWidth * 0.9,
+      height: size.deviceHeight * 0.3,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset("assets/check_cal_dialog.png"),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: size.deviceWidth * 0.8,
+                child: Text(
+                  "今日の目標消費カロリーを達成しました！\n報酬として、昨日食べた食品の栄養素\nタンパク質：104.4g\n脂質：45.2g\n炭水化物：221.9g\nビタミン：34.9g\nミネラル：11309.4g\nが${widget.name}さんに付与されます。",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  setState(() {
+                    // ホーム画面の変数に反映する
+                  });
+                  Navigator.pop(context);
                 },
                 child: Container(
                   margin: EdgeInsets.only(top: 20),

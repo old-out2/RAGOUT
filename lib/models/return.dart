@@ -2,7 +2,7 @@ import 'package:app/importer.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class calorie {
+class Calorie {
   double homecal = 0;
 
   //ホーム画面のカロリー表示
@@ -40,7 +40,7 @@ class calorie {
   // }
 
   //歩いた歩数から消費カロリーを差し引いた残り
-  calculateKal(int nofSteps) async {
+  calculateKcal(int nofSteps) async {
     final pref = await SharedPreferences.getInstance();
     var height = pref.getString('height');
     var weight = pref.getString('weight');
@@ -61,8 +61,34 @@ class calorie {
     var calculate = onestep * nofSteps;
     print("onestep: " + onestep.toString());
     //一日の消費カロリーから引いて残った分を返す
-    var residue = defaultcal - calculate;
+    int residue = (defaultcal - calculate).toInt();
+
     return residue;
+  }
+
+  //標準消費カロリー
+  calculateDefaultKcal() async {
+    final pref = await SharedPreferences.getInstance();
+    var weight = pref.getString('weight');
+
+    //標準の消費カロリー
+    int defaultcal = (1.05 * 3 * 1.1 * int.parse(weight!)).toInt();
+
+    return defaultcal;
+  }
+
+  //１日の歩数合計 = 歩行距離 ÷ 歩幅(m)
+  calculateTargetSteps() async {
+    final pref = await SharedPreferences.getInstance();
+    var height = pref.getString('height');
+
+    //歩幅(cm) = 身長 × 0.45
+    var stride = int.parse(height!) * 0.45;
+
+    //１日の歩数合計 = 歩行距離 ÷ 歩幅(m)
+    var steps = 4400 ~/ (stride / 100);
+
+    return steps;
   }
 
   //一日の合計カロリーと栄養をを算出する
