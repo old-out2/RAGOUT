@@ -8,16 +8,19 @@ class AvatarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => StatusScreen()),
-        );
-      },
-      child: Image.asset(
-        'assets/avatar.png',
-        height: 240,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StatusScreen()),
+          );
+        },
+        child: Image.asset(
+          'assets/avatar.png',
+          height: 240,
+        ),
       ),
     );
   }

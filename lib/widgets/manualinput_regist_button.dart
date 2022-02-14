@@ -10,12 +10,15 @@ class ManualInputRegistButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: TextButton(
-        onPressed: () {
-          CustomDialog(context).showCustomDialog(totalcal);
-        },
-        child: Image.asset(
-          'assets/manualinput_regist.png',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            CustomDialog(context).showCustomDialog(totalcal);
+          },
+          child: Image.asset(
+            'assets/manualinput_regist.png',
+          ),
         ),
       ),
     );

@@ -17,33 +17,36 @@ class TrophyButton extends StatelessWidget {
     size.init(context);
     return SizedBox(
       width: size.deviceWidth * 0.33,
-      child: TextButton(
-        onPressed: () {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return Dialog(
-                insetPadding: EdgeInsets.zero,
-                backgroundColor: Colors.transparent,
-                child: TrophyScreen(onSave: onSave),
-              );
-            },
-          );
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => TrophyScreen()),
-          // );
-          // showModalBottomSheet(
-          //     backgroundColor: Colors.transparent,
-          //     isScrollControlled: true,
-          //     context: context,
-          //     builder: (BuildContext context) {
-          //       return TrophyScreen();
-          //     });
-        },
-        child: Image.asset(
-          'assets/trophy.png',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  insetPadding: EdgeInsets.zero,
+                  backgroundColor: Colors.transparent,
+                  child: TrophyScreen(onSave: onSave),
+                );
+              },
+            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => TrophyScreen()),
+            // );
+            // showModalBottomSheet(
+            //     backgroundColor: Colors.transparent,
+            //     isScrollControlled: true,
+            //     context: context,
+            //     builder: (BuildContext context) {
+            //       return TrophyScreen();
+            //     });
+          },
+          child: Image.asset(
+            'assets/trophy.png',
+          ),
         ),
       ),
     );

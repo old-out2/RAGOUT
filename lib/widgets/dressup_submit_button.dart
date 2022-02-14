@@ -10,12 +10,15 @@ class DressupSubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 220,
-      child: TextButton(
-        onPressed: () {
-          //
-        },
-        child: Image.asset(
-          'assets/dressup_submit.png',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            //
+          },
+          child: Image.asset(
+            'assets/dressup_submit.png',
+          ),
         ),
       ),
     );

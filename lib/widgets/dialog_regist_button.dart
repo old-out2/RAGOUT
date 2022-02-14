@@ -14,17 +14,20 @@ class DialogRegistButton extends StatelessWidget {
     size.init(context);
     return SizedBox(
         width: size.deviceWidth * 0.2,
-        child: TextButton(
-          onPressed: () async {
-            await Eat.insertEat(eatfood);
-            Calorie().totalcal();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const HomeScreen(title: 'RAGOUT')),
-            );
-          },
-          child: Image.asset('assets/dialog_regist.png'),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () async {
+              await Eat.insertEat(eatfood);
+              Calorie().totalcal();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const HomeScreen(title: 'RAGOUT')),
+              );
+            },
+            child: Image.asset('assets/dialog_regist.png'),
+          ),
         ));
   }
 }

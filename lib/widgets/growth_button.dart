@@ -13,15 +13,19 @@ class GrowthButton extends StatelessWidget {
     // size.init(context);
     return SizedBox(
       width: size.deviceWidth * 0.33,
-      child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ManualInputScreen()),
-          );
-        },
-        child: Image.asset(
-          'assets/growth.png',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ManualInputScreen()),
+            );
+          },
+          child: Image.asset(
+            'assets/growth.png',
+          ),
         ),
       ),
     );

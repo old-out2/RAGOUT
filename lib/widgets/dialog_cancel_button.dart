@@ -19,11 +19,14 @@ class DialogCancelButton extends StatelessWidget {
 
     return SizedBox(
         width: size.deviceWidth * 0.2,
-        child: TextButton(
-          onPressed: () {
-            hideCustomDialog();
-          },
-          child: Image.asset('assets/dialog_cancel.png'),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              hideCustomDialog();
+            },
+            child: Image.asset('assets/dialog_cancel.png'),
+          ),
         ));
   }
 }

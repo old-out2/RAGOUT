@@ -10,15 +10,18 @@ class DressupButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 270,
-      child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DressupScreen()),
-          );
-        },
-        child: Image.asset(
-          'assets/dressup.png',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DressupScreen()),
+            );
+          },
+          child: Image.asset(
+            'assets/dressup.png',
+          ),
         ),
       ),
     );

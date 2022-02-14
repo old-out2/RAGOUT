@@ -9,15 +9,18 @@ class BattleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: size.deviceWidth * 0.33,
-      child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BattleScreen()),
-          );
-        },
-        child: Image.asset(
-          'assets/battle.png',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BattleScreen()),
+            );
+          },
+          child: Image.asset(
+            'assets/battle.png',
+          ),
         ),
       ),
     );

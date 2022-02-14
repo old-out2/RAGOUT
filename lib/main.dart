@@ -33,10 +33,10 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       // ここを追加する。
-      supportedLocales: [
-        const Locale("en"),
-        const Locale("ja"),
-      ],
+      // supportedLocales: [
+      //   const Locale("en"),
+      //   const Locale("ja"),
+      // ],
     );
   }
 }
