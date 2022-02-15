@@ -420,11 +420,12 @@ class _TutorialState extends State<TutorialScreen> {
                   onPressed: () async {
                     _showTutorial(context);
                     Food.insertFood();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomeScreen(title: "RAGOUT")),
-                    );
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const HomeScreen(title: "RAGOUT")),
+                        (_) => false);
                   }),
             )
           ],
