@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (tagetSteps - nowSteps <= 0) {
         // 目標達成処理
         showGoalAchievementDialog(nowSteps, backgroundSteps, defaultKcal);
-      } else if (tagetSteps - nowSteps > 0) {
+      } else if (backgroundSteps > 0) {
         // バックグラウンド起動中にどれだけ歩いたか表示
         showStepsDialog(nowSteps, backgroundSteps, defaultKcal, tagetSteps);
       }
