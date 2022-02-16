@@ -20,11 +20,11 @@ class DialogRegistButton extends StatelessWidget {
             onTap: () async {
               await Eat.insertEat(eatfood);
               Calorie().totalcal();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const HomeScreen(title: 'RAGOUT')),
-              );
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const HomeScreen(title: "RAGOUT")),
+                  (_) => false);
             },
             child: Image.asset('assets/dialog_regist.png'),
           ),
