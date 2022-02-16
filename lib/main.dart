@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var list = Calorie();
   int showSection = 1;
   int _nofSteps = 0;
+  int targetSteps = 0;
   int defaultKcal = 0;
   double expPoint = 120;
   // DBから取ってくるようにする
@@ -90,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void init() async {
     defaultKcal = await list.calculateDefaultKcal();
     _nofSteps = await fetchStepData();
+    targetSteps = await list.calculateTargetSteps();
   }
 
   @override
@@ -212,6 +214,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         defaultKcal: defaultKcal,
       ),
       TodaysConsumedCalories(list: list),
+      TodaysTotalSteps(nofSteps: _nofSteps),
+      TodaysRemainingSteps(nofSteps: _nofSteps, targetSteps: targetSteps)
     ];
 
     return Scaffold(
@@ -283,16 +287,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             ),
                           ],
                         ),
-                        // SizedBox(
-                        //   width: size.deviceWidth * 0.4,
-                        //   child: Image.asset('assets/shelf.png'),
-                        // ),
                       ],
                     ),
-                    // Visibility(
-                    //   visible: _visible,
-                    //   child: showWidget[widgetIndex],
-                    // ),
                     Column(
                       children: [
                         Stack(
@@ -314,27 +310,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           width: size.deviceWidth * 0.4,
                           child: Image.asset('assets/shelf.png'),
                         ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const Text(
-                          "今日の歩数",
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "$_nofSteps歩",
-                          style: const TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          width: size.deviceWidth * 0.4,
-                          child: Image.asset('assets/shelf.png'),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            AnimatedOpacity(
+                              opacity: _bornCalVisible ? 0.0 : 1.0,
+                              duration: Duration(milliseconds: 300),
+                              child: showWidget[2],
+                            ),
+                            AnimatedOpacity(
+                              opacity: _consumeCalVisible ? 0.0 : 1.0,
+                              duration: Duration(milliseconds: 300),
+                              child: showWidget[3],
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -388,6 +377,79 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
       ),
+    );
+  }
+}
+
+class TodaysTotalSteps extends StatelessWidget {
+  const TodaysTotalSteps({
+    Key? key,
+    required int nofSteps,
+  })  : _nofSteps = nofSteps,
+        super(key: key);
+
+  final int _nofSteps;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          "今日の歩数",
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          "$_nofSteps歩",
+          style: const TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(
+          width: size.deviceWidth * 0.4,
+          child: Image.asset('assets/shelf.png'),
+        ),
+      ],
+    );
+  }
+}
+
+class TodaysRemainingSteps extends StatelessWidget {
+  const TodaysRemainingSteps({
+    Key? key,
+    required this.nofSteps,
+    required this.targetSteps,
+  }) : super(key: key);
+
+  final int nofSteps;
+  final int targetSteps;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          "残りの歩数",
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          "${targetSteps - nofSteps}歩",
+          style: const TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(
+          width: size.deviceWidth * 0.4,
+          child: Image.asset('assets/shelf.png'),
+        ),
+      ],
     );
   }
 }
