@@ -47,6 +47,10 @@ class Food {
           "CREATE TABLE food(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
         await db.execute(
+          //バーコード食品データベース
+          "CREATE TABLE barcode(code PRIMARY KEY, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
+        );
+        await db.execute(
           //食べた物のデータベース
           "CREATE TABLE eat(date TEXT, foodid INTEGER, eiyo TEXT ,FOREIGN KEY(foodid) REFERENCES food(id))",
         );

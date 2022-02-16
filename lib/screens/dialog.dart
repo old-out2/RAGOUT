@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:app/importer.dart';
 import 'package:app/widgets/dialog_cancel_button.dart';
 import 'package:app/widgets/dialog_regist_button.dart';
@@ -5,7 +7,8 @@ import '../ModelOverlay.dart';
 
 class CustomDialog {
   BuildContext context;
-  CustomDialog(this.context) : super();
+  final List<Map<String, String>> eatfood;
+  CustomDialog({required this.context, required this.eatfood}) : super();
   var size = SizeConfig();
 
   void showCustomDialog(double totalcal) {
@@ -59,10 +62,10 @@ class CustomDialog {
                            */
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               DialogCancelButton(),
                               SizedBox(width: 45),
-                              DialogRegistButton()
+                              DialogRegistButton(eatfood: eatfood)
                             ],
                           )
                         ],

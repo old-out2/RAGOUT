@@ -4,9 +4,8 @@ import 'package:app/models/return.dart';
 import 'package:app/screens/manualinput_screen.dart';
 
 class DialogRegistButton extends StatelessWidget {
-  const DialogRegistButton({
-    Key? key,
-  }) : super(key: key);
+  final List<Map<String, String>> eatfood;
+  const DialogRegistButton({Key? key, required this.eatfood}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

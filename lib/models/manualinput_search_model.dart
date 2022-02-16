@@ -34,11 +34,11 @@ class ManualInputSearchModel extends ChangeNotifier {
               .replaceAll(RegExp("＜.*＞|（.*）|［.*］|" r'\s'), "")
               .trim(),
           "cal": element.cal.toString(),
-          "protein": element.protein,
-          "lipids": element.lipids,
-          "carb": element.carb,
-          "mineral": element.mineral,
-          "bitamin": element.bitamin
+          // "protein": element.protein,
+          // "lipids": element.lipids,
+          // "carb": element.carb,
+          // "mineral": element.mineral,
+          // "bitamin": element.bitamin
         });
       });
       // this.searchList.forEach(

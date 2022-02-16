@@ -17,7 +17,7 @@ class GrowthButton extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ManualInputScreen()),
+            MaterialPageRoute(builder: (context) => ManualInputScreen()),
           );
         },
         child: Image.asset(
