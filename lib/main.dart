@@ -125,13 +125,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
       int nowSteps = await fetchStepData();
-      print("nowSteps: $nowSteps");
       final int backgroundSteps = nowSteps - _nofSteps;
       _nofSteps = nowSteps;
-      print("backgroundSteps: $backgroundSteps");
       final defaultKcal = await list.calculateDefaultKcal();
-      print("defaultKcal: $defaultKcal");
       final tagetSteps = await list.calculateTargetSteps();
+
+      print("nowSteps: $nowSteps");
+      print("backgroundSteps: $backgroundSteps");
+      print("defaultKcal: $defaultKcal");
       print("tagetSteps: $tagetSteps");
 
       // 目標を達成してるかどうかの判定処理
