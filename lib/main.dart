@@ -314,12 +314,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           alignment: Alignment.center,
                           children: [
                             AnimatedOpacity(
-                              opacity: _bornCalVisible ? 0.0 : 1.0,
+                              opacity: _consumeCalVisible ? 0.0 : 1.0,
                               duration: Duration(milliseconds: 300),
                               child: showWidget[2],
                             ),
                             AnimatedOpacity(
-                              opacity: _consumeCalVisible ? 0.0 : 1.0,
+                              opacity: _bornCalVisible ? 0.0 : 1.0,
                               duration: Duration(milliseconds: 300),
                               child: showWidget[3],
                             ),
@@ -512,7 +512,7 @@ class TodaysBornCalories extends StatelessWidget {
     return Column(
       children: [
         const Text(
-          "今日の残り消費カロリー",
+          "残り消費カロリー",
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
