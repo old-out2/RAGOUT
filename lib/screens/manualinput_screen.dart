@@ -45,7 +45,7 @@ class _ManualInputScreenState extends State<ManualInputScreen> {
         totalcal += double.parse(suggestion['cal'].toString());
         _list.add(suggestion);
         eatfood.add({
-          "date": nowDate.toString(),
+          "date": DateFormat('yyyy/MM/dd').format(nowDate),
           "foodid": suggestion["id"].toString(),
           "eiyo": null.toString(),
         });

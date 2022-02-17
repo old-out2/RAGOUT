@@ -1,7 +1,8 @@
 // import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:app/models/return.dart';
 import 'package:multi_charts/multi_charts.dart';
 import 'package:app/importer.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class StatusRadarChart extends StatefulWidget {
@@ -19,8 +20,53 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
 
   @override
   Widget build(BuildContext context) {
+    Future getvalue() async {
+      var date = DateFormat('yyyy/MM/dd').format(DateTime.now());
+      List<dynamic> SearchList = await total.getTotal(date);
+
+      var cal = await Calorie().requiredAmount();
+
+      var Amount = cal[0];
+      var gendar = cal[1];
+
+      //タンパク質
+      double protein = (Amount * 0.175) / 4;
+
+      //炭水化物
+      double carb = (Amount * 0.575) / 4;
+
+      //脂質
+      double lipids = (Amount * 0.25) / 9;
+
+      //ビタミン
+      double bitamin = 129.1496;
+
+      //ミネラル 9,753.6 9,250.39
+      double mineral = (gendar == 0) ? 9753.6 : 9250.39;
+
+      // print(protein);
+
+      List<double> maps = [];
+      for (var element in SearchList) {
+        maps.add(((double.parse(element['protein']) / protein) * 100)
+            .roundToDouble());
+        maps.add(
+            ((double.parse(element['lipids']) / lipids) * 100).roundToDouble());
+        maps.add(((double.parse(element['mineral']) / mineral) * 100)
+            .roundToDouble());
+        maps.add(((double.parse(element['bitamin']) / bitamin) * 100)
+            .roundToDouble());
+        maps.add(
+            ((double.parse(element['carb']) / carb) * 100).roundToDouble());
+      }
+
+      return maps;
+    }
+
     final pages = <Widget>[
-      FiveMajorNutrientsChart(),
+      FiveMajorNutrientsChart(
+        stateFunction: getvalue(),
+      ),
       FiveStatusChart(),
     ];
     size.init(context);
@@ -61,13 +107,24 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
   }
 }
 
+//今日の食べた栄養素グラフ
 class FiveMajorNutrientsChart extends StatelessWidget {
-  const FiveMajorNutrientsChart({
-    Key? key,
-  }) : super(key: key);
+  final Future stateFunction;
+  const FiveMajorNutrientsChart({Key? key, required this.stateFunction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<double> data = [0.0, 0.0, 0.0, 0.0, 0.0];
+    stateFunction.then((news) {
+      print(news);
+      if (news.isNotEmpty) {
+        data.clear();
+        data.addAll(news);
+      }
+      print(data);
+    });
+
     return Stack(
       children: [
         Container(
@@ -121,9 +178,10 @@ class FiveMajorNutrientsChart extends StatelessWidget {
           ),
         ),
         RadarChart(
-          values: [30, 14, 10, 18, 20],
-          labels: ["", "", "", "", ""],
-          maxValue: 50,
+          //ここの値を変更する
+          values: data,
+          // labels: ["", "", "", "", ""],
+          maxValue: 100,
           fillColor: Colors.blue,
           chartRadiusFactor: 0.7,
         ),
@@ -132,6 +190,7 @@ class FiveMajorNutrientsChart extends StatelessWidget {
   }
 }
 
+//現在のキャラステータス
 class FiveStatusChart extends StatelessWidget {
   const FiveStatusChart({
     Key? key,
@@ -192,6 +251,7 @@ class FiveStatusChart extends StatelessWidget {
           ),
         ),
         RadarChart(
+          //ここの値を変更する
           values: [1, 2, 4, 7, 9],
           labels: ["", "", "", "", ""],
           maxValue: 50,
