@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:app/importer.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -133,5 +135,35 @@ class Calorie {
       maps["date"] = now;
       await total.insertTotal(maps);
     }
+  }
+
+  requiredAmount() async {
+    String now = DateFormat('yyyyMMdd').format(DateTime.now());
+
+    final pref = await SharedPreferences.getInstance();
+    int height = int.parse(pref.getString('height')!);
+    int weight = int.parse(pref.getString('weight')!);
+    int birthday = int.parse(pref.getString('birthday')!.replaceAll("/", ""));
+    int gendar = pref.getInt('gender')!;
+    double activeLevel = double.parse(pref.getInt('ActiveLevel').toString());
+    if (activeLevel == 0) {
+      activeLevel = 1.5;
+    } else if (activeLevel == 1) {
+      activeLevel = 1.75;
+    }
+
+    int age = ((int.parse(now) - birthday) / 10000).floor();
+
+    double A = 0.0481 * weight;
+    double B = 0.0234 * height;
+    double C = 0.0138 * age;
+    double D = 0.5473 * (gendar + 1);
+    double E = 0.1238 + A + B - C - D;
+    double basis = E * 1000 / 4.186;
+
+    //一日の活動に必要なエネルギー量
+    double Amount = basis * activeLevel;
+
+    return [Amount.round(), gendar];
   }
 }

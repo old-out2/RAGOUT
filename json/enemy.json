@@ -1,0 +1,9 @@
+[
+  {
+    "name": "敵1",
+    "HP": 5,
+    "power": 5,
+    "speed": 5,
+    "defenses": 5
+  }
+]
