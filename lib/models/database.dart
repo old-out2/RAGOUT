@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -59,8 +60,8 @@ class Food {
           "CREATE TABLE total(date TEXT PRIMARY KEY, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
         await db.execute(
-          //ステータス
-          "CREATE TABLE status(date TEXT PRIMARY KEY, growth INTEGER, status TEXT)",
+          //ステータス date TEXT PRIMARY KEY,
+          "CREATE TABLE status( power REAL, physical REAL, wisdom REAL, speed REAL, luck REAL)",
         );
         await db.execute(
           //トロフィー
@@ -72,10 +73,22 @@ class Food {
     return _database;
   }
 
+  //食べ物とステータスの初期登録
   static Future<void> insertFood() async {
+    Database db = await database;
+
     String loadData = await rootBundle.loadString('json/food.json');
     List<dynamic> jsonArray = jsonDecode(loadData);
-    Database db = await database;
+    Map<String, dynamic> status = {
+      // "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
+      "power": 0,
+      "physical": 0,
+      "wisdom": 0,
+      "speed": 0,
+      "luck": 0
+    };
+    await db.insert('status', status,
+        conflictAlgorithm: ConflictAlgorithm.replace);
     for (var item in jsonArray) {
       await db.insert(
         'food',
@@ -156,14 +169,31 @@ class Eat {
 
 //ステータス
 class Status {
-  String date;
-  int growth;
-  String status;
+  // String date;
+  double power;
+  double physical;
+  double widsom;
+  double speed;
+  double luck;
 
-  Status({required this.date, required this.growth, required this.status});
+  Status(
+      {
+      // required this.date,
+      required this.power,
+      required this.physical,
+      required this.widsom,
+      required this.speed,
+      required this.luck});
 
   Map<String, dynamic> toMap() {
-    return {'date': date, 'growth': growth, 'status': status};
+    return {
+      // 'date': date,
+      'power': power,
+      'physical': physical,
+      'wisdom': widsom,
+      "speed": speed,
+      "luck": luck
+    };
   }
 
   static Future<Database> get database async {
@@ -174,43 +204,27 @@ class Status {
     return _database;
   }
 
-  static Future<void> insertStatus() async {
-    var test = {
-      "date": "2021/01/01",
-      "growth": 100,
-      "status":
-          "{'cal': 100, 'protein': 5,'lipids': 4,'carb': 3,'mineral': 2,'bitamin':1}"
-    };
-    Database db = await database;
-    await db.insert('status', test,
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    // for (var item in jsonArray) {
-    //   await db.insert(
-    //     'status',
-    //     item,
-    //     conflictAlgorithm: ConflictAlgorithm.replace,
-    //   );
-    // }
-  }
-
   static Future<void> updateStatus(Status status) async {
     Database db = await database;
-    await db.update('status', status.toMap(),
-        where: "date = ?", whereArgs: [status.date]);
+    await db.update('status', status.toMap());
+    // where: "date = ?", whereArgs: [status.date]);
   }
 
-  static Future<List<Status>> getStatus() async {
+  static Future<Status> getStatus() async {
     Database db = await database;
     //名前が一致する物を返す処理を書く必要がある
     List<Map<String, dynamic>> maps = await db.query("status");
 
-    return List.generate(maps.length, (i) {
-      return Status(
-        date: maps[i]["date"],
-        growth: maps[i]["growth"],
-        status: maps[i]["status"],
-      );
-    });
+    // return List.generate(maps.length, (i) {
+    return Status(
+      // date: maps[i]["date"],
+      physical: maps[0]["physical"],
+      power: maps[0]["power"],
+      widsom: maps[0]["wisdom"],
+      speed: maps[0]["speed"],
+      luck: maps[0]["luck"],
+    );
+    // });
   }
 }
 

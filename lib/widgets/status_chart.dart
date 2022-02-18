@@ -20,8 +20,8 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
 
   @override
   Widget build(BuildContext context) {
+    var date = DateFormat('yyyy/MM/dd').format(DateTime.now());
     Future getvalue() async {
-      var date = DateFormat('yyyy/MM/dd').format(DateTime.now());
       List<dynamic> SearchList = await total.getTotal(date);
 
       var cal = await Calorie().requiredAmount();
@@ -63,11 +63,26 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
       return maps;
     }
 
+    Future getchara() async {
+      var status = await Status.getStatus();
+      List<double> list = [];
+
+      list.addAll([
+        status.physical,
+        status.power,
+        status.speed,
+        status.widsom,
+        status.luck
+      ]);
+
+      return list;
+    }
+
     final pages = <Widget>[
       FiveMajorNutrientsChart(
         stateFunction: getvalue(),
       ),
-      FiveStatusChart(),
+      FiveStatusChart(stateFunction: getchara()),
     ];
     size.init(context);
 
@@ -180,7 +195,7 @@ class FiveMajorNutrientsChart extends StatelessWidget {
         RadarChart(
           //ここの値を変更する
           values: data,
-          // labels: ["", "", "", "", ""],
+          labels: ["", "", "", "", ""],
           maxValue: 100,
           fillColor: Colors.blue,
           chartRadiusFactor: 0.7,
@@ -192,12 +207,19 @@ class FiveMajorNutrientsChart extends StatelessWidget {
 
 //現在のキャラステータス
 class FiveStatusChart extends StatelessWidget {
-  const FiveStatusChart({
-    Key? key,
-  }) : super(key: key);
+  final Future stateFunction;
+  const FiveStatusChart({Key? key, required this.stateFunction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<double> data = [0.0, 0.0, 0.0, 0.0, 0.0];
+    stateFunction.then((status) {
+      data.clear();
+      data.addAll(status);
+      print(data);
+    });
+
     return Stack(
       children: [
         Container(
@@ -252,7 +274,7 @@ class FiveStatusChart extends StatelessWidget {
         ),
         RadarChart(
           //ここの値を変更する
-          values: [1, 2, 4, 7, 9],
+          values: [0, 0, 0, 0, 0],
           labels: ["", "", "", "", ""],
           maxValue: 50,
           fillColor: Colors.blue,

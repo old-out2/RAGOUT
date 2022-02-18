@@ -27,24 +27,23 @@ class _TutorialState extends State<TutorialScreen> {
   List<String> exerciseList = ['運動しない', '少し運動する', '良く運動する'];
 
   @override
+  void initState() {
+    gendar();
+    super.initState();
+  }
+
+  void gendar() async {
+    final pref = await SharedPreferences.getInstance();
+    pref.setInt('gender', sexList.lastIndexOf(dropdownSexValue));
+    pref.setInt(
+        'ActiveLevel', exerciseList.lastIndexOf(dropdownzExerciseValue));
+  }
+
+  @override
   Widget build(BuildContext context) {
     size.init(context);
     DateTime nowDate = DateTime.now();
     String date = DateFormat('yyyy年MM月dd日').format(nowDate);
-    Future(() async {
-      await Food.insertFood();
-    });
-
-    void gendar() async {
-      final pref = await SharedPreferences.getInstance();
-      pref.setInt('gender', sexList.lastIndexOf(dropdownSexValue));
-    }
-
-    @override
-    void initState() {
-      super.initState();
-      gendar();
-    }
 
     //チュートリアルを行った判定を保存
     void _showTutorial(BuildContext context) async {
@@ -66,15 +65,15 @@ class _TutorialState extends State<TutorialScreen> {
               width: 40,
               child: Image.asset("assets/icon.png"),
             ),
-            Text(
+            const Text(
               "入会申込書",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 "この度は健康管理アプリ「RAGOUT(ラグー)」をインストールしていただき、誠にありがとうございます。当アプリをご利用していただくにあたってお客様の身体情報が必要になります。お手数ですが、以下の入力欄からご記入のほどよろしくお願いいたします。",
                 style: TextStyle(
@@ -277,10 +276,14 @@ class _TutorialState extends State<TutorialScreen> {
                               showTitleActions: true,
                               minTime: DateTime(1900, 1, 1),
                               maxTime: DateTime(DateTime.now().year, 12, 31),
-                              onConfirm: (date) {
+                              onConfirm: (date) async {
                                 setState(() {
                                   targetday = date;
                                 });
+                                final pref =
+                                    await SharedPreferences.getInstance();
+                                pref.setString('birthday',
+                                    DateFormat('yyyy/MM/dd').format(date));
                               },
                               currentTime: targetday,
                               locale: LocaleType.jp,
