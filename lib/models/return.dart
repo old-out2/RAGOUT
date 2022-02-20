@@ -167,3 +167,10 @@ class Calorie {
     return [Amount.round(), gendar];
   }
 }
+
+//戦闘に使う関数
+class battle {
+  damege() {
+    //アステリオス方式を採用する予定
+  }
+}

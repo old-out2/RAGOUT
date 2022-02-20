@@ -49,7 +49,7 @@ class Food {
         );
         await db.execute(
           //バーコード食品データベース
-          "CREATE TABLE barcode(code PRIMARY KEY, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
+          "CREATE TABLE barcode(code TEXT PRIMARY KEY, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
         await db.execute(
           //食べた物のデータベース
@@ -61,7 +61,11 @@ class Food {
         );
         await db.execute(
           //ステータス date TEXT PRIMARY KEY,
-          "CREATE TABLE status( power REAL, physical REAL, wisdom REAL, speed REAL, luck REAL)",
+          "CREATE TABLE status(power REAL, physical REAL, wisdom REAL, speed REAL, luck REAL)",
+        );
+        await db.execute(
+          //敵のステータス
+          "CREATE TABLE enemy(name INTEGER, HP INTEGER,power INTEGER,speed INTEGER,defenses INTEGER)",
         );
         await db.execute(
           //トロフィー
@@ -79,6 +83,13 @@ class Food {
 
     String loadData = await rootBundle.loadString('json/food.json');
     List<dynamic> jsonArray = jsonDecode(loadData);
+
+    String barcode = await rootBundle.loadString('json/barcode.json');
+    List<dynamic> barcodeArray = jsonDecode(barcode);
+
+    String enemy = await rootBundle.loadString('json/enemy.json');
+    List<dynamic> enemyArray = jsonDecode(enemy);
+
     Map<String, dynamic> status = {
       // "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
       "power": 0,
@@ -92,6 +103,22 @@ class Food {
     for (var item in jsonArray) {
       await db.insert(
         'food',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    for (var item in barcodeArray) {
+      await db.insert(
+        'barcode',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    for (var item in enemyArray) {
+      await db.insert(
+        'enemy',
         item,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );

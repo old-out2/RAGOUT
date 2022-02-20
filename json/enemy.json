@@ -5,5 +5,12 @@
     "power": 5,
     "speed": 5,
     "defenses": 5
+  },
+  {
+    "name": "敵1",
+    "HP": 15,
+    "power": 8,
+    "speed": 7,
+    "defenses": 5
   }
 ]
