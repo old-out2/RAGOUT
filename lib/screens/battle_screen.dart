@@ -1,5 +1,4 @@
 import 'package:app/importer.dart';
-import 'package:ezanimation/ezanimation.dart';
 
 enum AvatarStatus {
   reversible,
@@ -75,12 +74,6 @@ class _BattleScreenState extends State<BattleScreen>
   bool enemyAttackFlag = false;
   bool avatarAttackFlag = true;
   bool buttonFlag = true;
-
-  EzAnimation damageAnimation = EzAnimation.sequence([
-    SequenceItem(0.0, 1.0),
-    SequenceItem(1.0, 1.0, weight: 2.0),
-    SequenceItem(1.0, 0.0),
-  ], Duration(seconds: 3));
 
   void calcDamage(double width, double lp, double widthRatio, String target) {
     print("run calcDamage");
