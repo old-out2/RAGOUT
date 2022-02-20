@@ -98,14 +98,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     var size = SizeConfig();
     super.initState();
-    init();
-    WidgetsBinding.instance?.addObserver(this);
     // double kal = totalKal - Database.calculateKcal(_nofSteps);
-
+    WidgetsBinding.instance?.addObserver(this);
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       var prefs = await SharedPreferences.getInstance();
       if (prefs.getBool('isFirstLaunch') != true) {
-        await Navigator.of(context).pushNamed('/tutorial');
+        Navigator.of(context).pushNamed('/tutorial');
+      } else {
+        init();
       }
     });
 

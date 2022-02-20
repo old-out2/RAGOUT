@@ -1,5 +1,4 @@
 import 'package:app/importer.dart';
-import "dart:developer";
 
 class GrowthScreen extends StatefulWidget {
   const GrowthScreen({Key? key}) : super(key: key);
@@ -9,7 +8,7 @@ class GrowthScreen extends StatefulWidget {
 }
 
 class _GrowthScreenState extends State<GrowthScreen> {
-  Barcode? result;
+  Barcode? result; //バーコードの取得
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -85,6 +84,7 @@ class _GrowthScreenState extends State<GrowthScreen> {
     setState(() {
       this.controller = controller;
     });
+    //barcodeを読みこんだ場合のコールバック処理
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
@@ -93,7 +93,6 @@ class _GrowthScreenState extends State<GrowthScreen> {
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
-    // log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('no Permission')),

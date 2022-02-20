@@ -1,23 +1,23 @@
-import 'dart:developer';
-
 import 'package:app/importer.dart';
-import 'package:app/models/manualinput_search_model.dart';
 import 'package:app/widgets/manualinput_barcode_button.dart';
 import 'package:app/widgets/manualinput_regist_button.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:provider/provider.dart';
+import 'package:app/widgets/manualinput_search.dart';
+import 'package:app/widgets/manualinput_slidar.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 
-List<Slidable> _list = [];
-List<Map<String, String>> eatfood = [];
-double totalcal = 0;
-
-class ManualInputScreen extends StatelessWidget {
+class ManualInputScreen extends StatefulWidget {
   const ManualInputScreen({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<ManualInputScreen> createState() => _ManualInputScreenState();
+}
+
+class _ManualInputScreenState extends State<ManualInputScreen> {
+  List<dynamic> _list = [];
+  List<Map<String, String>> eatfood = [];
+  late double totalcal = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,27 @@ class ManualInputScreen extends StatelessWidget {
         DateFormat(') HH:mm').format(nowDate);
     size.init(context);
 
-    final InputKey = GlobalObjectKey<_ManualInputSearchState>(context);
+    // final InputKey = GlobalObjectKey<_ManualInputSearchState>(context);
+
+    void addFunction(Map<String, String> suggestion) {
+      setState(() {
+        totalcal += double.parse(suggestion['cal'].toString());
+        _list.add(suggestion);
+        eatfood.add({
+          "date": DateFormat('yyyy/MM/dd').format(nowDate),
+          "foodid": suggestion["id"].toString(),
+          "eiyo": null.toString(),
+        });
+      });
+    }
+
+    void deleteFuntion(int index) {
+      setState(() {
+        totalcal -= double.parse(_list[index]["cal"]);
+        _list.remove(_list[index]);
+        eatfood.removeAt(index);
+      });
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -73,7 +93,12 @@ class ManualInputScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: ManualInputSearch(
-                        nowDate: DateFormat('yyyy/MM/dd').format(nowDate)),
+                      nowDate: DateFormat('yyyy/MM/dd').format(nowDate),
+                      list: _list,
+                      eatfood: eatfood,
+                      totalcal: totalcal,
+                      stateFunction: addFunction,
+                    ),
                   ),
                   SizedBox(
                     height: size.deviceHeight * 0.02,
@@ -127,15 +152,12 @@ class ManualInputScreen extends StatelessWidget {
                         Expanded(
                           child: SizedBox(
                             child: Container(
-                              child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                // shrinkWrap: true,
-                                itemCount: _list.length,
-                                itemBuilder: (BuildContext context, index) {
-                                  return _list[index];
-                                },
-                              ),
-                            ),
+                                child: SlidarCard(
+                              list: _list,
+                              eatfood: eatfood,
+                              totalcal: totalcal,
+                              stateFunction: deleteFuntion,
+                            )),
                           ),
                         ),
                       ],
@@ -148,29 +170,22 @@ class ManualInputScreen extends StatelessWidget {
                       thickness: 2,
                     ),
                   ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "合計",
-                          style: TextStyle(
-                            fontSize: 24,
-                          ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "合計",
+                        style: TextStyle(
+                          fontSize: 24,
                         ),
-                        Text(
-                          "${totalcal}kcal",
-                          style: TextStyle(
-                            fontSize: 24,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      textcal(total: totalcal)
+                    ],
                   ),
                 ],
               ),
             ),
-            const ManualInputRegistButton(),
+            ManualInputRegistButton(totalcal: totalcal, eatfood: eatfood),
             const ManualInputBarcodeButton(),
             Padding(padding: EdgeInsets.all(size.deviceHeight * 0.02)),
           ],
@@ -180,115 +195,17 @@ class ManualInputScreen extends StatelessWidget {
   }
 }
 
-class ManualInputSearch extends StatefulWidget {
-  final String nowDate;
-  const ManualInputSearch({Key? key, required this.nowDate}) : super(key: key);
-
-  @override
-  State<ManualInputSearch> createState() => _ManualInputSearchState();
-}
-
-class _ManualInputSearchState extends State<ManualInputSearch> {
-  final TextEditingController _typeAheadController = TextEditingController();
+class textcal extends StatelessWidget {
+  late double total;
+  textcal({Key? key, required this.total}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ManualInputSearchModel>(
-      create: (_) => ManualInputSearchModel(),
-      child: Consumer<ManualInputSearchModel>(builder: (context, model, child) {
-        return Column(
-          children: [
-            TypeAheadField(
-              // getImmediateSuggestions: true,
-              textFieldConfiguration: TextFieldConfiguration(
-                controller: this._typeAheadController,
-                decoration: InputDecoration(
-                    suffixIcon: Icon(Icons.search),
-                    border: UnderlineInputBorder(),
-                    labelText: '食べたものを検索'),
-                onChanged: (text) {
-                  model.text = text; // <= modelのtext変数に値を渡す
-                  model.search();
-                  // debugPrint(model.searchResultList.toString());
-                },
-              ),
-              suggestionsCallback: (pattern) {
-                // model.text = pattern;
-                // model.search();
-                return model.searchResultList;
-              },
-              itemBuilder: (context, Map<String, String> suggestion) {
-                // debugPrint(model.searchResultList.toString());
-                return Card(
-                    child: ListTile(
-                  title: Text(suggestion['name'].toString()),
-                ));
-              },
-              transitionBuilder: (context, suggestionsBox, controller) {
-                return suggestionsBox;
-              },
-              onSuggestionSelected: (Map<String, String> suggestion) {
-                this._typeAheadController.text = suggestion['name'].toString();
-                totalcal += double.parse(suggestion['cal'].toString());
-                eatfood.add({
-                  "date": widget.nowDate,
-                  "foodid": suggestion["id"].toString(),
-                  "eiyo": null.toString(),
-                });
-                debugPrint(suggestion.toString());
-                // debugPrint(suggestion.toString());
-                _list.add(
-                  Slidable(
-                    endActionPane: ActionPane(
-                      motion: ScrollMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            _list.remove(suggestion);
-                            eatfood.remove(suggestion);
-                            // _list.remove(value)
-                            // suggestion.clear();
-                          },
-                          backgroundColor: Color(0xFFFE4A49),
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                          label: 'Delete',
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: size.deviceWidth * 0.55,
-                          child: Text(
-                            suggestion['name'].toString(),
-                            style: TextStyle(
-                              fontSize: 22,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Text(
-                          suggestion['cal'].toString(),
-                          style: TextStyle(
-                            fontSize: 22,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              // validator: (value) {
-              //   if (value.isEmpty) {
-              //     return 'Please select a city';
-              //   }
-              // },
-            ),
-          ],
-        );
-      }),
+    return Text(
+      "${total}kcal",
+      style: const TextStyle(
+        fontSize: 24,
+      ),
     );
   }
 }

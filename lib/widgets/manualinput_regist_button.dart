@@ -1,11 +1,12 @@
 import 'package:app/importer.dart';
-import 'package:app/screens/manualinput_screen.dart';
 import 'package:app/screens/dialog.dart';
 
 class ManualInputRegistButton extends StatelessWidget {
-  const ManualInputRegistButton({
-    Key? key,
-  }) : super(key: key);
+  final double totalcal;
+  final List<Map<String, String>> eatfood;
+  const ManualInputRegistButton(
+      {Key? key, required this.totalcal, required this.eatfood})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,8 @@ class ManualInputRegistButton extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () {
-            CustomDialog(context).showCustomDialog(totalcal);
+            CustomDialog(context: context, eatfood: eatfood)
+                .showCustomDialog(totalcal);
           },
           child: Image.asset(
             'assets/manualinput_regist.png',
