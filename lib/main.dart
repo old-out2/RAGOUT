@@ -661,6 +661,11 @@ class GoalAchievementDialog extends StatefulWidget {
 
 class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
   int targetSteps = 3000;
+
+  // Future getnutrient() async{
+
+  // }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(

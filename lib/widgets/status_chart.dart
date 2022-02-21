@@ -22,7 +22,7 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
   Widget build(BuildContext context) {
     var date = DateFormat('yyyy/MM/dd').format(DateTime.now());
     Future getvalue() async {
-      List<dynamic> SearchList = await total.getTotal(date);
+      Map<String, dynamic> SearchList = await total.getTotal(date);
 
       var cal = await Calorie().requiredAmount();
 
@@ -47,18 +47,18 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
       // print(protein);
 
       List<double> maps = [];
-      for (var element in SearchList) {
-        maps.add(((double.parse(element['protein']) / protein) * 100)
-            .roundToDouble());
-        maps.add(
-            ((double.parse(element['lipids']) / lipids) * 100).roundToDouble());
-        maps.add(((double.parse(element['mineral']) / mineral) * 100)
-            .roundToDouble());
-        maps.add(((double.parse(element['bitamin']) / bitamin) * 100)
-            .roundToDouble());
-        maps.add(
-            ((double.parse(element['carb']) / carb) * 100).roundToDouble());
-      }
+      // for (var SearchList in SearchList) {
+      maps.add(((double.parse(SearchList['protein']) / protein) * 100)
+          .roundToDouble());
+      maps.add(((double.parse(SearchList['lipids']) / lipids) * 100)
+          .roundToDouble());
+      maps.add(((double.parse(SearchList['mineral']) / mineral) * 100)
+          .roundToDouble());
+      maps.add(((double.parse(SearchList['bitamin']) / bitamin) * 100)
+          .roundToDouble());
+      maps.add(
+          ((double.parse(SearchList['carb']) / carb) * 100).roundToDouble());
+      // }
 
       return maps;
     }

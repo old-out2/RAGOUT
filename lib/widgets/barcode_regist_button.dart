@@ -2,6 +2,7 @@ import 'package:app/importer.dart';
 import 'package:intl/intl.dart';
 
 import '../main.dart';
+import '../models/return.dart';
 
 class BarcodeRegistButton extends StatelessWidget {
   final String code;
@@ -25,7 +26,7 @@ class BarcodeRegistButton extends StatelessWidget {
           child: GestureDetector(
             onTap: () async {
               await Eat.Insertbarcode(map);
-              // Calorie().totalcal();
+              Calorie().totalcal();
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(

@@ -309,13 +309,31 @@ class total {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<List<Map<String, dynamic>>> getTotal(String date) async {
+  static Future<Map<String, dynamic>> getTotal(String date) async {
     Database db = await database;
 
     List<Map<String, dynamic>> maps = await db.rawQuery(
         'SELECT cal, protein, lipids,carb,mineral,bitamin FROM total WHERE date = ?',
         [date]);
 
-    return maps;
+    if (maps.isEmpty) {
+      return {
+        'cal': '0',
+        'protein': '0',
+        'lipids': '0',
+        'carb': '0',
+        'mineral': '0',
+        'bitamin': '0'
+      };
+    }
+
+    return {
+      'cal': maps[0]['cal'],
+      'protein': maps[0]["protein"],
+      'lipids': maps[0]["lipids"],
+      'carb': maps[0]["carb"],
+      'mineral': maps[0]["mineral"],
+      'bitamin': maps[0]["bitamin"],
+    };
   }
 }
