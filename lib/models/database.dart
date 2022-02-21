@@ -53,7 +53,7 @@ class Food {
         );
         await db.execute(
           //食べた物のデータベース
-          "CREATE TABLE eat(date TEXT, foodid INTEGER, eiyo TEXT ,FOREIGN KEY(foodid) REFERENCES food(id))",
+          "CREATE TABLE eat(date TEXT, foodid INTEGER, barcode TEXT , FOREIGN KEY(foodid) REFERENCES food(id), FOREIGN KEY(barcode) REFERENCES barcode(code))",
         );
         await db.execute(
           //一日の合計のデータベース
@@ -150,11 +150,11 @@ class Food {
 class Eat {
   String date;
   int foodid;
-  String eiyo;
+  String barcode;
 
-  Eat({required this.date, required this.foodid, required this.eiyo});
+  Eat({required this.date, required this.foodid, required this.barcode});
   Map<String, dynamic> toMap() {
-    return {'date': date, 'foodid': foodid, 'eiyo': eiyo};
+    return {'date': date, 'foodid': foodid, 'barcode': barcode};
   }
 
   static Future<Database> get database async {
@@ -183,7 +183,7 @@ class Eat {
     return maps;
   }
 
-  static Future<List<Map<String, dynamic>>> getcal(String date) async {
+  static Future<List<Map<String, dynamic>>> getfoodcal(String date) async {
     Database db = await database;
 
     List<Map<String, dynamic>> maps = await db.rawQuery(
@@ -191,6 +191,36 @@ class Eat {
         [date]);
 
     return maps;
+  }
+
+  static Future<List<Map<String, dynamic>>> getcodecal(String date) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT barcode.cal FROM eat INNER JOIN barcode ON eat.barcode = barcode.code WHERE eat.date = ?',
+        [date]);
+
+    return maps;
+  }
+
+  static Future<Map<String, dynamic>> getbarcode(String barcode) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT code, name , cal  FROM barcode WHERE code = ?', [barcode]);
+
+    var map = {
+      "barcode": maps[0]["code"],
+      "name": maps[0]["name"],
+      "cal": maps[0]["cal"],
+    };
+    return map;
+  }
+
+  static Future<void> Insertbarcode(Map<String, dynamic> maps) async {
+    Database db = await database;
+
+    await db.insert('eat', maps, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }
 

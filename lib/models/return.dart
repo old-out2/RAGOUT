@@ -11,10 +11,14 @@ class Calorie {
   callist() async {
     var prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('isFirstLaunch') == true) {
+      String now = DateFormat('yyyy/MM/dd').format(DateTime.now());
       double totalcal = 0;
-      var callist =
-          await Eat.getcal(DateFormat('yyyy/MM/dd').format(DateTime.now()));
+      var callist = await Eat.getfoodcal(now);
       for (var element in callist) {
+        totalcal += element["cal"];
+      }
+      var barlist = await Eat.getcodecal(now);
+      for (var element in barlist) {
         totalcal += element["cal"];
       }
       homecal = totalcal;

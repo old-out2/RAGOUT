@@ -5,7 +5,7 @@ import 'package:app/widgets/dialog_cancel_button.dart';
 import 'package:app/widgets/dialog_regist_button.dart';
 import '../ModelOverlay.dart';
 
-class CustomDialog {
+class CustomDialog extends StatelessWidget {
   BuildContext context;
   final List<Map<String, String>> eatfood;
   CustomDialog({required this.context, required this.eatfood}) : super();
@@ -78,5 +78,11 @@ class CustomDialog {
         isAndroidBackEnable: false,
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
   }
 }
