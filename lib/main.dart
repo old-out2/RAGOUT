@@ -11,33 +11,72 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Future<bool> getFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? isFirstLaunch = prefs.getBool('isFirstLaunch');
+    isFirstLaunch ??= false;
+
+    return isFirstLaunch;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'RAGOUT',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Hiragino Maru Gothic ProN',
-      ),
-      initialRoute: '/',
-      routes: <String, WidgetBuilder>{
-        '/': (context) => const HomeScreen(title: 'RAGOUT'),
-        '/tutorial': (BuildContext context) => const TutorialScreen(),
-      },
-      // ここを追加する。
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      // ここを追加する。
-      supportedLocales: const [
-        Locale("en"),
-        Locale("ja"),
-      ],
-    );
+    return FutureBuilder(
+        future: getFirstLaunch(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          var home;
+          final FirstLaunch = snapshot.data;
+          if (snapshot.hasData) {
+            if (FirstLaunch!) {
+              home = const HomeScreen(title: 'RAGOUT');
+            } else {
+              home = const TutorialScreen();
+            }
+          } else {
+            home = Container(
+                color: const Color(0xFFFFAB5D),
+                child: Center(
+                  child:
+                      Column(mainAxisSize: MainAxisSize.min, children: const [
+                    Text(
+                      "ロード中",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          color: Colors.white,
+                          decoration: TextDecoration.none),
+                    )
+                  ]),
+                ));
+          }
+
+          return MaterialApp(
+            title: 'RAGOUT',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              fontFamily: 'Hiragino Maru Gothic ProN',
+            ),
+            home: home,
+            // ここを追加する。
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            // ここを追加する。
+            supportedLocales: const [
+              Locale("en"),
+              Locale("ja"),
+            ],
+          );
+        });
   }
 }
 
@@ -90,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void init() async {
     defaultKcal = await list.calculateDefaultKcal();
-    _nofSteps = await fetchStepData();
+    // _nofSteps = await fetchStepData();
     targetSteps = await list.calculateTargetSteps();
   }
 
@@ -109,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
     });
 
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       changeWidget(_bornCalVisible, _consumeCalVisible);
     });
   }
@@ -126,7 +165,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // アプリがバックグラウンドに行ったとき
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
-      int nowSteps = await fetchStepData();
+      int nowSteps = 100;
+      //await fetchStepData();
       final int backgroundSteps = nowSteps - _nofSteps;
       _nofSteps = nowSteps;
       final defaultKcal = await list.calculateDefaultKcal();
@@ -158,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       _bornCalVisible = !bornCalVisible;
       _consumeCalVisible = !consumeCalVisible;
     });
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       changeWidget(_bornCalVisible, _consumeCalVisible);
     });
   }
@@ -296,12 +336,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           children: [
                             AnimatedOpacity(
                               opacity: _bornCalVisible ? 0.0 : 1.0,
-                              duration: Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 300),
                               child: showWidget[0],
                             ),
                             AnimatedOpacity(
                               opacity: _consumeCalVisible ? 0.0 : 1.0,
-                              duration: Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 300),
                               child: showWidget[1],
                             ),
                           ],
@@ -315,12 +355,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           children: [
                             AnimatedOpacity(
                               opacity: _consumeCalVisible ? 0.0 : 1.0,
-                              duration: Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 300),
                               child: showWidget[2],
                             ),
                             AnimatedOpacity(
                               opacity: _bornCalVisible ? 0.0 : 1.0,
-                              duration: Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 300),
                               child: showWidget[3],
                             ),
                           ],
@@ -344,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       ),
                       Text(
                         title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),
@@ -357,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GrowthButton(),
+                      const GrowthButton(),
                       TrophyButton(
                         onSave: (newTitle) {
                           setState(() {
@@ -365,10 +405,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           });
                         },
                       ),
-                      BattleButton(),
+                      const BattleButton(),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                 ],
@@ -482,7 +522,7 @@ class TodaysConsumedCalories extends StatelessWidget {
               // },
               child: Text(
                 "${(list.homecal ~/ 1).toString()}kcal",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                 ),
@@ -527,7 +567,7 @@ class TodaysBornCalories extends StatelessWidget {
               // },
               child: Text(
                 "${defaultKcal}kcal",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                 ),
@@ -590,7 +630,7 @@ class _CheckCalDialogState extends State<CheckCalDialog> {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: const EdgeInsets.only(top: 20),
                   width: size.deviceWidth * 0.12,
                   child: Image.asset("assets/checkcal_ok_button.png"),
                 ),
@@ -621,6 +661,12 @@ class GoalAchievementDialog extends StatefulWidget {
 
 class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
   int targetSteps = 3000;
+
+  //取得する栄養素
+  // Future getnutrient() async{
+
+  // }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -652,7 +698,7 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: const EdgeInsets.only(top: 20),
                   width: size.deviceWidth * 0.12,
                   child: Image.asset("assets/checkcal_ok_button.png"),
                 ),

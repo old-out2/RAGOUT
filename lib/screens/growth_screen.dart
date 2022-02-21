@@ -1,5 +1,9 @@
 import 'package:app/importer.dart';
 
+import '../ModelOverlay.dart';
+import '../widgets/barcode_regist_button.dart';
+import '../widgets/dialog_cancel_button.dart';
+
 class GrowthScreen extends StatefulWidget {
   const GrowthScreen({Key? key}) : super(key: key);
 
@@ -9,6 +13,7 @@ class GrowthScreen extends StatefulWidget {
 
 class _GrowthScreenState extends State<GrowthScreen> {
   Barcode? result; //バーコードの取得
+  bool _isQRscanned = false;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -86,9 +91,16 @@ class _GrowthScreenState extends State<GrowthScreen> {
     });
     //barcodeを読みこんだ場合のコールバック処理
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+      String test = "1203842309";
+      Map<String, dynamic> map;
+      Future((() async {
+        map = await Eat.getbarcode(test);
+        print(map);
+        // setState(() {
+        //   result = scanData;
+        // });
+        barcodeDialog(map);
+      }));
     });
   }
 
@@ -97,6 +109,78 @@ class _GrowthScreenState extends State<GrowthScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('no Permission')),
       );
+    }
+  }
+
+  barcodeDialog(Map<String, dynamic> result) {
+    if (!_isQRscanned) {
+      controller?.pauseCamera();
+      _isQRscanned = true;
+      Navigator.push(
+          context,
+          ModalOverlay(Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Stack(
+                children: <Widget>[
+                  Image.asset(
+                    "assets/dialog.png",
+                    fit: BoxFit.fitWidth,
+                  ),
+                  SizedBox(
+                      height: 200.0,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const SizedBox(height: 40),
+                            /*
+                             * タイトル
+                             */
+                            Text(
+                              result["cal"].toString() + "Kcal",
+                              style: const TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                locale: Locale("ja", "JP"),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            /*
+                             * メッセージ
+                             */
+                            const Text(
+                              "登録しますか？",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                locale: Locale("ja", "JP"),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            /*
+                           * OKボタン
+                           */
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                DialogCancelButton(),
+                                SizedBox(width: 45),
+                                BarcodeRegistButton(
+                                    code: result["barcode"].toString())
+                              ],
+                            )
+                          ],
+                        ),
+                      ))
+                ],
+              ),
+            ],
+          )))).then((value) {
+        controller?.resumeCamera();
+        _isQRscanned = false;
+      });
     }
   }
 

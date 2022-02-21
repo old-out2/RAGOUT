@@ -49,11 +49,11 @@ class Food {
         );
         await db.execute(
           //バーコード食品データベース
-          "CREATE TABLE barcode(code PRIMARY KEY, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
+          "CREATE TABLE barcode(code TEXT PRIMARY KEY, name TEXT, cal REAL,protein TEXT, lipids TEXT,carb TEXT,mineral TEXT,bitamin TEXT)",
         );
         await db.execute(
           //食べた物のデータベース
-          "CREATE TABLE eat(date TEXT, foodid INTEGER, eiyo TEXT ,FOREIGN KEY(foodid) REFERENCES food(id))",
+          "CREATE TABLE eat(date TEXT, foodid INTEGER, barcode TEXT , FOREIGN KEY(foodid) REFERENCES food(id), FOREIGN KEY(barcode) REFERENCES barcode(code))",
         );
         await db.execute(
           //一日の合計のデータベース
@@ -61,7 +61,11 @@ class Food {
         );
         await db.execute(
           //ステータス date TEXT PRIMARY KEY,
-          "CREATE TABLE status( power REAL, physical REAL, wisdom REAL, speed REAL, luck REAL)",
+          "CREATE TABLE status(power REAL, physical REAL, wisdom REAL, speed REAL, luck REAL)",
+        );
+        await db.execute(
+          //敵のステータス
+          "CREATE TABLE enemy(name INTEGER, HP INTEGER,power INTEGER,speed INTEGER,defenses INTEGER)",
         );
         await db.execute(
           //トロフィー
@@ -79,6 +83,13 @@ class Food {
 
     String loadData = await rootBundle.loadString('json/food.json');
     List<dynamic> jsonArray = jsonDecode(loadData);
+
+    String barcode = await rootBundle.loadString('json/barcode.json');
+    List<dynamic> barcodeArray = jsonDecode(barcode);
+
+    String enemy = await rootBundle.loadString('json/enemy.json');
+    List<dynamic> enemyArray = jsonDecode(enemy);
+
     Map<String, dynamic> status = {
       // "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
       "power": 0,
@@ -92,6 +103,22 @@ class Food {
     for (var item in jsonArray) {
       await db.insert(
         'food',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    for (var item in barcodeArray) {
+      await db.insert(
+        'barcode',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    for (var item in enemyArray) {
+      await db.insert(
+        'enemy',
         item,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -123,11 +150,11 @@ class Food {
 class Eat {
   String date;
   int foodid;
-  String eiyo;
+  String barcode;
 
-  Eat({required this.date, required this.foodid, required this.eiyo});
+  Eat({required this.date, required this.foodid, required this.barcode});
   Map<String, dynamic> toMap() {
-    return {'date': date, 'foodid': foodid, 'eiyo': eiyo};
+    return {'date': date, 'foodid': foodid, 'barcode': barcode};
   }
 
   static Future<Database> get database async {
@@ -156,7 +183,7 @@ class Eat {
     return maps;
   }
 
-  static Future<List<Map<String, dynamic>>> getcal(String date) async {
+  static Future<List<Map<String, dynamic>>> getfoodcal(String date) async {
     Database db = await database;
 
     List<Map<String, dynamic>> maps = await db.rawQuery(
@@ -164,6 +191,36 @@ class Eat {
         [date]);
 
     return maps;
+  }
+
+  static Future<List<Map<String, dynamic>>> getcodecal(String date) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT barcode.cal FROM eat INNER JOIN barcode ON eat.barcode = barcode.code WHERE eat.date = ?',
+        [date]);
+
+    return maps;
+  }
+
+  static Future<Map<String, dynamic>> getbarcode(String barcode) async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT code, name , cal  FROM barcode WHERE code = ?', [barcode]);
+
+    var map = {
+      "barcode": maps[0]["code"],
+      "name": maps[0]["name"],
+      "cal": maps[0]["cal"],
+    };
+    return map;
+  }
+
+  static Future<void> Insertbarcode(Map<String, dynamic> maps) async {
+    Database db = await database;
+
+    await db.insert('eat', maps, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }
 
@@ -252,13 +309,31 @@ class total {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<List<Map<String, dynamic>>> getTotal(String date) async {
+  static Future<Map<String, dynamic>> getTotal(String date) async {
     Database db = await database;
 
     List<Map<String, dynamic>> maps = await db.rawQuery(
         'SELECT cal, protein, lipids,carb,mineral,bitamin FROM total WHERE date = ?',
         [date]);
 
-    return maps;
+    if (maps.isEmpty) {
+      return {
+        'cal': '0',
+        'protein': '0',
+        'lipids': '0',
+        'carb': '0',
+        'mineral': '0',
+        'bitamin': '0'
+      };
+    }
+
+    return {
+      'cal': maps[0]['cal'],
+      'protein': maps[0]["protein"],
+      'lipids': maps[0]["lipids"],
+      'carb': maps[0]["carb"],
+      'mineral': maps[0]["mineral"],
+      'bitamin': maps[0]["bitamin"],
+    };
   }
 }

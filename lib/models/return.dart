@@ -11,10 +11,14 @@ class Calorie {
   callist() async {
     var prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('isFirstLaunch') == true) {
+      String now = DateFormat('yyyy/MM/dd').format(DateTime.now());
       double totalcal = 0;
-      var callist =
-          await Eat.getcal(DateFormat('yyyy/MM/dd').format(DateTime.now()));
+      var callist = await Eat.getfoodcal(now);
       for (var element in callist) {
+        totalcal += element["cal"];
+      }
+      var barlist = await Eat.getcodecal(now);
+      for (var element in barlist) {
         totalcal += element["cal"];
       }
       homecal = totalcal;
@@ -165,5 +169,12 @@ class Calorie {
     double Amount = basis * activeLevel;
 
     return [Amount.round(), gendar];
+  }
+}
+
+//戦闘に使う関数
+class battle {
+  damege() {
+    //アステリオス方式を採用する予定
   }
 }
