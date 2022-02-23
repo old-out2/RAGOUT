@@ -22,43 +22,13 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
   Widget build(BuildContext context) {
     var date = DateFormat('yyyy/MM/dd').format(DateTime.now());
     Future getvalue() async {
-      Map<String, dynamic> SearchList = await total.getTotal(date);
-
-      var cal = await Calorie().requiredAmount();
-
-      var Amount = cal[0];
-      var gendar = cal[1];
-
-      //タンパク質
-      double protein = (Amount * 0.175) / 4;
-
-      //炭水化物
-      double carb = (Amount * 0.575) / 4;
-
-      //脂質
-      double lipids = (Amount * 0.25) / 9;
-
-      //ビタミン
-      double bitamin = 129.1496;
-
-      //ミネラル 9,753.6 9,250.39
-      double mineral = (gendar == 0) ? 9753.6 : 9250.39;
-
-      // print(protein);
+      List AmountList = await Calorie().requiredAmount(date);
 
       List<double> maps = [];
-      // for (var SearchList in SearchList) {
-      maps.add(((double.parse(SearchList['protein']) / protein) * 100)
-          .roundToDouble());
-      maps.add(((double.parse(SearchList['lipids']) / lipids) * 100)
-          .roundToDouble());
-      maps.add(((double.parse(SearchList['mineral']) / mineral) * 100)
-          .roundToDouble());
-      maps.add(((double.parse(SearchList['bitamin']) / bitamin) * 100)
-          .roundToDouble());
-      maps.add(
-          ((double.parse(SearchList['carb']) / carb) * 100).roundToDouble());
-      // }
+
+      for (var element in AmountList) {
+        maps.add(element);
+      }
 
       return maps;
     }
@@ -132,7 +102,6 @@ class FiveMajorNutrientsChart extends StatelessWidget {
   Widget build(BuildContext context) {
     List<double> data = [0.0, 0.0, 0.0, 0.0, 0.0];
     stateFunction.then((news) {
-      print(news);
       if (news.isNotEmpty) {
         data.clear();
         data.addAll(news);

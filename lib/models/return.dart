@@ -25,26 +25,6 @@ class Calorie {
     }
   }
 
-  //標準の消費カロリー
-  // consume() async{
-  //    final pref = await SharedPreferences.getInstance();
-  //   var height = pref.getString('height');
-  //   var weight = pref.getString('weight');
-
-  //   //歩幅(cm) = 身長 × 0.45
-  //   var stride = int.parse(height!);
-
-  //   //１日の歩数合計 = 歩行距離 ÷ 歩幅(m)
-  //   var steps = 4400 / stride;
-
-  //   //標準の消費カロリー
-  //   var defaultcal = 1.05 * 3 * 1.1 * int.parse(weight!);
-
-  //   //一歩に対するカロリー
-  //   var onestep = defaultcal / steps;
-
-  // }
-
   //歩いた歩数から消費カロリーを差し引いた残り
   calculateKcal(int nofSteps) async {
     final pref = await SharedPreferences.getInstance();
@@ -110,6 +90,7 @@ class Calorie {
     String now = DateFormat('yyyy/MM/dd').format(DateTime.now());
 
     var callist = await Eat.getEat(now);
+    var barcode = await Eat.getcodecal(now);
 
     replace(String value) {
       return value.replaceAll(RegExp("[()]"), "");
@@ -123,6 +104,16 @@ class Calorie {
       mineral += double.parse(replace(element["mineral"]));
       bitamin += double.parse(replace(element["bitamin"]));
     }
+
+    for (var element in barcode) {
+      cal += element["cal"];
+      protein += double.parse(replace(element["protein"]));
+      lipids += double.parse(replace(element["lipids"]));
+      carb += double.parse(replace(element["carb"]));
+      mineral += double.parse(replace(element["mineral"]));
+      bitamin += double.parse(replace(element["bitamin"]));
+    }
+
     maps.addAll({
       'cal': cal.toString(),
       'protein': protein.toString(),
@@ -133,18 +124,20 @@ class Calorie {
     });
 
     var get = await total.getTotal(now);
-    if (get.isNotEmpty) {
-      await total.updateTotal(maps);
-    } else {
+    // print("gettotal:$get");
+    if (get["date"] == null) {
       maps["date"] = now;
       await total.insertTotal(maps);
+    } else {
+      await total.updateTotal(maps);
     }
   }
 
-  requiredAmount() async {
+  requiredAmount(String date) async {
     String now = DateFormat('yyyyMMdd').format(DateTime.now());
 
     final pref = await SharedPreferences.getInstance();
+    Map<String, dynamic> SearchList = await total.getTotal(date);
     int height = int.parse(pref.getString('height')!);
     int weight = int.parse(pref.getString('weight')!);
     int birthday = int.parse(pref.getString('birthday')!.replaceAll("/", ""));
@@ -166,15 +159,43 @@ class Calorie {
     double basis = E * 1000 / 4.186;
 
     //一日の活動に必要なエネルギー量
-    double Amount = basis * activeLevel;
+    int Amount = (basis * activeLevel).round();
 
-    return [Amount.round(), gendar];
-  }
-}
+    //タンパク質
+    double Amountprotein = (Amount * 0.175) / 4;
 
-//戦闘に使う関数
-class battle {
-  damege() {
-    //アステリオス方式を採用する予定
+    //炭水化物
+    double Amountcarb = (Amount * 0.575) / 4;
+
+    //脂質
+    double Amountlipids = (Amount * 0.25) / 9;
+
+    //ビタミン
+    double Amountbitamin = 129.1496;
+
+    //ミネラル 9,753.6 9,250.39
+    double Amountmineral = (gendar == 0) ? 9753.6 : 9250.39;
+
+    double protein =
+        ((double.parse(SearchList['protein']) / Amountprotein) * 100)
+            .roundToDouble();
+
+    double lipids = ((double.parse(SearchList['lipids']) / Amountcarb) * 100)
+        .roundToDouble();
+
+    double mineral =
+        ((double.parse(SearchList['mineral']) / Amountmineral) * 100)
+            .roundToDouble();
+
+    double bitamin =
+        ((double.parse(SearchList['bitamin']) / Amountbitamin) * 100)
+            .roundToDouble();
+
+    double carb =
+        ((double.parse(SearchList['carb']) / Amountcarb) * 100).roundToDouble();
+
+    print(SearchList);
+
+    return [protein, lipids, mineral, bitamin, carb];
   }
 }

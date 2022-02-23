@@ -123,6 +123,22 @@ class Food {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
+
+    //デバッグ用 total
+    Map<String, dynamic> eat = {
+      'date': "2022/02/22",
+      'cal': "2000",
+      'protein': "90",
+      'lipids': "40",
+      'carb': "130",
+      'mineral': "5000",
+      'bitamin': "20"
+    };
+    await db.insert(
+      'total',
+      eat,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   static Future<List<Food>> getFoods(name) async {
@@ -197,7 +213,7 @@ class Eat {
     Database db = await database;
 
     List<Map<String, dynamic>> maps = await db.rawQuery(
-        'SELECT barcode.cal FROM eat INNER JOIN barcode ON eat.barcode = barcode.code WHERE eat.date = ?',
+        'SELECT * FROM eat INNER JOIN barcode ON eat.barcode = barcode.code WHERE eat.date = ?',
         [date]);
 
     return maps;
@@ -318,6 +334,7 @@ class total {
 
     if (maps.isEmpty) {
       return {
+        "date": null,
         'cal': '0',
         'protein': '0',
         'lipids': '0',

@@ -20,15 +20,18 @@ class _BattleWinScreenState extends State<BattleWinScreen> {
       child: Column(
         children: [
           SizedBox(
-            width: size.deviceWidth * 0.8,
+            height: size.deviceHeight * 0.35,
+            // width: size.deviceWidth * 0.8,
             child: Image.asset('assets/battle_win.png'),
           ),
           SizedBox(
-            width: size.deviceWidth * 0.5,
+            height: size.deviceHeight * 0.35,
+            // width: size.deviceWidth * 0.5,
             child: Image.asset('assets/avatar_win.png'),
           ),
           SizedBox(
-            width: size.deviceWidth * 0.8,
+            height: size.deviceHeight * 0.2,
+            // width: size.deviceWidth * 0.8,
             child: Image.asset('assets/battle_win_text.png'),
           ),
           TextButton(
@@ -43,7 +46,7 @@ class _BattleWinScreenState extends State<BattleWinScreen> {
             child: Align(
               alignment: Alignment.bottomLeft,
               child: SizedBox(
-                width: size.deviceWidth * 0.3,
+                height: size.deviceHeight * 0.05,
                 child: Image.asset('assets/back_to_top.png'),
               ),
             ),

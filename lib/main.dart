@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:app/importer.dart';
 import 'package:app/models/return.dart';
 import 'package:app/screens/tutorial/tutorial_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:health/health.dart';
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void init() async {
     defaultKcal = await list.calculateDefaultKcal();
-    // _nofSteps = await fetchStepData();
+    _nofSteps = await fetchStepData();
     remainingSteps = await list.calculateTargetSteps();
   }
 
@@ -139,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     var size = SizeConfig();
     super.initState();
-
+    WidgetsBinding.instance?.addObserver(this);
     init();
 
     Future.delayed(const Duration(seconds: 5), () {
@@ -155,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
       // アプリがバックグラウンドに行ったとき
     } else if (state == AppLifecycleState.resumed) {
@@ -658,50 +660,89 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
   int targetSteps = 3000;
 
   //取得する栄養素
-  // Future getnutrient() async{
+  Future<Map<String, dynamic>> getnutrient() async {
+    final date = DateTime.now();
+    String now =
+        DateFormat('yyyy/MM/dd').format(date.add(const Duration(days: 1) * -1));
 
-  // }
+    var nutrient = await total.getTotal(now);
+    var status = await Status.getStatus();
+    List Amount = await Calorie().requiredAmount(now);
+
+    for (var element in Amount) {
+      var index = Amount.indexOf(element);
+      if (element > 75) {
+        Amount[index] = 3.0;
+      } else if (element > 50) {
+        Amount[index] = 2.0;
+      } else if (element > 25) {
+        Amount[index] = 1.0;
+      } else {
+        Amount[index] = 0.0;
+      }
+    }
+
+    var update = Status(
+        power: status.power + Amount[0],
+        physical: status.physical + Amount[1],
+        wisdom: status.wisdom + Amount[2],
+        speed: status.speed + Amount[3],
+        luck: status.luck + Amount[4]);
+
+    // print(update);
+
+    await Status.updateStatus(update);
+
+    return nutrient;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size.deviceWidth * 0.9,
-      height: size.deviceHeight * 0.3,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset("assets/check_cal_dialog.png"),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: size.deviceWidth * 0.8,
-                child: Text(
-                  "今日の目標消費カロリーを達成しました！\n報酬として、昨日食べた食品の栄養素\nタンパク質：104.4g\n脂質：45.2g\n炭水化物：221.9g\nビタミン：34.9g\nミネラル：11309.4g\nが${widget.name}さんに付与されます。",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+    return FutureBuilder(
+        future: getnutrient(),
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          var data = snapshot.data;
+          if (data != null) {
+            return SizedBox(
+              // width: size.deviceWidth * 0.9,
+              height: size.deviceHeight * 0.4,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset("assets/check_cal_dialog.png"),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: size.deviceWidth * 0.8,
+                        child: Text(
+                          "今日の目標消費カロリーを達成しました！\n報酬として、昨日食べた食品の栄養素\nタンパク質：${data["protein"]}g\n脂質：${data["lipids"]}g\n炭水化物：${data["carb"]}g\nビタミン：${data["bitamin"]}mg\nミネラル：${data["mineral"]}mg\nが${widget.name}さんに付与されます。",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          width: size.deviceWidth * 0.12,
+                          child: Image.asset("assets/checkcal_ok_button.png"),
+                        ),
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                ],
               ),
-              TextButton(
-                onPressed: () async {
-                  setState(() {
-                    // ホーム画面の変数に反映する
-                  });
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20),
-                  width: size.deviceWidth * 0.12,
-                  child: Image.asset("assets/checkcal_ok_button.png"),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+            );
+          } else {
+            return Text("");
+          }
+        });
   }
 }

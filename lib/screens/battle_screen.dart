@@ -110,36 +110,36 @@ class _BattleScreenState extends State<BattleScreen>
     //   updateOpacity = 0.0;
     // }
 
-    if (lp != 0) {
-      if (target == "avatar") {
-        damage = "-" + (enemypower.toInt()).toString();
-        lp = lp - enemypower;
-        if (lp < 0) {
-          lp = 0;
-        }
-        width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
-        // setState(() {
-        updateAvatarLpWidth = width;
-        updateAvatarLp = lp;
-        if (lp == 0) {
-          updateAvatarOpacity = 0.0;
-        }
-        // });
-      } else if (target == "enemy") {
-        int dp = (avatarpower - enemydefense).toInt();
-        damage = "-" + dp.toString();
-        lp = lp - dp.toDouble();
-        if (lp < 0) {
-          lp = 0;
-        }
-        width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
-        // setState(() {
-        updateEnemyLpWidth = width;
-        updateEnemyLp = lp;
-        if (lp == 0) {
-          updateEnemyOpacity = 0.0;
-        }
+    // if (lp != 0) {
+    if (target == "avatar") {
+      damage = "-" + (enemypower.toInt()).toString();
+      lp = lp - enemypower;
+      if (lp < 0) {
+        lp = 0;
       }
+      width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
+      // setState(() {
+      updateAvatarLpWidth = width;
+      updateAvatarLp = lp;
+      if (lp == 0) {
+        updateAvatarOpacity = 0.0;
+      }
+      // });
+    } else if (target == "enemy") {
+      int dp = (avatarpower - enemydefense).toInt();
+      damage = "-" + dp.toString();
+      lp = lp - dp.toDouble();
+      if (lp < 0) {
+        lp = 0;
+      }
+      width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
+      // setState(() {
+      updateEnemyLpWidth = width;
+      updateEnemyLp = lp;
+      if (lp == 0) {
+        updateEnemyOpacity = 0.0;
+      }
+      // }
       // });
     }
   }
@@ -290,6 +290,7 @@ class _BattleScreenState extends State<BattleScreen>
             });
           });
           Future.delayed(const Duration(seconds: 5), () {
+            Enemy.updateEnemy(enemyNumber);
             showDialog(
               barrierDismissible: false,
               context: context,
