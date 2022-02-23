@@ -95,7 +95,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var list = Calorie();
   int showSection = 1;
   int _nofSteps = 0;
-  int targetSteps = 0;
+  // int targetSteps = 0;
+  int remainingSteps = 0;
   int defaultKcal = 0;
   double expPoint = 120;
   // DBから取ってくるようにする
@@ -103,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String title = "新人戦士";
   // 歩数取得用
   HealthFactory health = HealthFactory();
+  bool achievementFlag = false;
 
   Future checkBurnCalories() async {}
 
@@ -130,23 +132,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void init() async {
     defaultKcal = await list.calculateDefaultKcal();
     // _nofSteps = await fetchStepData();
-    targetSteps = await list.calculateTargetSteps();
+    remainingSteps = await list.calculateTargetSteps();
   }
 
   @override
   void initState() {
     var size = SizeConfig();
     super.initState();
-    // double kal = totalKal - Database.calculateKcal(_nofSteps);
-    WidgetsBinding.instance?.addObserver(this);
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      var prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool('isFirstLaunch') != true) {
-        Navigator.of(context).pushNamed('/tutorial');
-      } else {
-        init();
-      }
-    });
+
+    init();
 
     Future.delayed(const Duration(seconds: 5), () {
       changeWidget(_bornCalVisible, _consumeCalVisible);
@@ -165,20 +159,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // アプリがバックグラウンドに行ったとき
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
-      int nowSteps = 100;
-      //await fetchStepData();
-      final int backgroundSteps = nowSteps - _nofSteps;
+      int nowSteps = await fetchStepData();
+      int backgroundSteps = nowSteps - _nofSteps;
       _nofSteps = nowSteps;
       final defaultKcal = await list.calculateDefaultKcal();
       final tagetSteps = await list.calculateTargetSteps();
+      final remainingSteps =
+          tagetSteps - nowSteps < 0 ? 0 : tagetSteps - nowSteps;
 
       print("nowSteps: $nowSteps");
       print("backgroundSteps: $backgroundSteps");
       print("defaultKcal: $defaultKcal");
       print("tagetSteps: $tagetSteps");
+      print("remainingSteps: $remainingSteps");
 
       // 目標を達成してるかどうかの判定処理
-      if (tagetSteps - nowSteps <= 0) {
+      if (tagetSteps - nowSteps <= 0 && achievementFlag == false) {
         // 目標達成処理
         showGoalAchievementDialog(nowSteps, backgroundSteps, defaultKcal);
       } else if (backgroundSteps > 0) {
@@ -227,6 +223,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void showGoalAchievementDialog(
       int nowSteps, int backgroundSteps, int defaultKcal) {
     print("run showGoalAchievement");
+    achievementFlag = true;
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -255,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ),
       TodaysConsumedCalories(list: list),
       TodaysTotalSteps(nofSteps: _nofSteps),
-      TodaysRemainingSteps(nofSteps: _nofSteps, targetSteps: targetSteps)
+      TodaysRemainingSteps(remainingSteps: remainingSteps),
     ];
 
     return Scaffold(
@@ -460,12 +457,10 @@ class TodaysTotalSteps extends StatelessWidget {
 class TodaysRemainingSteps extends StatelessWidget {
   const TodaysRemainingSteps({
     Key? key,
-    required this.nofSteps,
-    required this.targetSteps,
+    required this.remainingSteps,
   }) : super(key: key);
 
-  final int nofSteps;
-  final int targetSteps;
+  final int remainingSteps;
 
   @override
   Widget build(BuildContext context) {
@@ -479,7 +474,7 @@ class TodaysRemainingSteps extends StatelessWidget {
           ),
         ),
         Text(
-          "${targetSteps - nofSteps}歩",
+          "$remainingSteps歩",
           style: const TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,

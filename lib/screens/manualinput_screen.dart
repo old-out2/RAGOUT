@@ -47,7 +47,7 @@ class _ManualInputScreenState extends State<ManualInputScreen> {
         eatfood.add({
           "date": DateFormat('yyyy/MM/dd').format(nowDate),
           "foodid": suggestion["id"].toString(),
-          "eiyo": null.toString(),
+          "barcode": null.toString(),
         });
       });
     }

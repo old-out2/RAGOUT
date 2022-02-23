@@ -13,10 +13,16 @@ class BattleButton extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BattleScreen()),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => BattleScreen()),
+            // );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BattleScreen(),
+                ),
+                (_) => false);
           },
           child: Image.asset(
             'assets/battle.png',
