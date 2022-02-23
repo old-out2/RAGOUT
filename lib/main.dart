@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var list = Calorie();
   int showSection = 1;
   int _nofSteps = 0;
-  int targetSteps = 0;
+  // int targetSteps = 0;
   int remainingSteps = 0;
   int defaultKcal = 0;
   double expPoint = 120;
@@ -132,23 +132,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void init() async {
     defaultKcal = await list.calculateDefaultKcal();
     // _nofSteps = await fetchStepData();
-    targetSteps = await list.calculateTargetSteps();
+    remainingSteps = await list.calculateTargetSteps();
   }
 
   @override
   void initState() {
     var size = SizeConfig();
     super.initState();
-    // double kal = totalKal - Database.calculateKcal(_nofSteps);
-    WidgetsBinding.instance?.addObserver(this);
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      var prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool('isFirstLaunch') != true) {
-        Navigator.of(context).pushNamed('/tutorial');
-      } else {
-        init();
-      }
-    });
+
+    init();
 
     Future.delayed(const Duration(seconds: 5), () {
       changeWidget(_bornCalVisible, _consumeCalVisible);
@@ -168,7 +160,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       // アプリが復帰したとき
       int nowSteps = await fetchStepData();
-      //await fetchStepData();
       int backgroundSteps = nowSteps - _nofSteps;
       _nofSteps = nowSteps;
       final defaultKcal = await list.calculateDefaultKcal();
