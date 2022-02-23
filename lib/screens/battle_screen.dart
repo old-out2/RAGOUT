@@ -1,4 +1,9 @@
 import 'package:app/importer.dart';
+import 'package:app/models/return.dart';
+import 'package:app/screens/battle_win_screen.dart';
+
+import '../main.dart';
+import 'battle_lose_screen.dart';
 
 enum AvatarStatus {
   reversible,
@@ -57,10 +62,10 @@ class _BattleScreenState extends State<BattleScreen>
   EnemyAttackStatus enemyAttackStatus = EnemyAttackStatus.forwadable;
   AvatarDamageStatus avatarDamageStatus = AvatarDamageStatus.forwadable;
   EnemyDamageStatus enemyDamageStatus = EnemyDamageStatus.forwadable;
-  double avatarLp = 100;
+  double avatarLp = 200;
   double avatarLpWidth = 80;
   double avatarWidthRatio = 0;
-  double enemyLp = 200;
+  double enemyLp = 100;
   double enemyLpWidth = 80;
   double enemyWidthRatio = 0;
   double avatarOpacity = 1.0;
@@ -83,12 +88,6 @@ class _BattleScreenState extends State<BattleScreen>
       lp = 0;
     }
     width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
-
-    // updateLpWidth = width;
-    // updateLp = lp;
-    // if (lp == 0) {
-    //   updateOpacity = 0.0;
-    // }
 
     if (target == "avatar") {
       // setState(() {
@@ -156,11 +155,25 @@ class _BattleScreenState extends State<BattleScreen>
         avatarAttackFlag = true;
         avatarLp = updateAvatarLp;
         avatarLpWidth = updateAvatarLpWidth;
+        // 負け処理
         if (updateAvatarLp <= 0) {
           Future.delayed(const Duration(seconds: 2), () {
             setState(() {
               avatarOpacity = updateAvatarOpacity;
             });
+          });
+          Future.delayed(const Duration(seconds: 5), () {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  insetPadding: EdgeInsets.zero,
+                  backgroundColor: Colors.transparent,
+                  child: BattleLoseScreen(),
+                );
+              },
+            );
           });
         }
       });
@@ -202,11 +215,25 @@ class _BattleScreenState extends State<BattleScreen>
         enemyAttackFlag = true;
         enemyLp = updateEnemyLp;
         enemyLpWidth = updateEnemyLpWidth;
+        // 勝ち処理
         if (updateEnemyLp <= 0) {
           Future.delayed(const Duration(seconds: 2), () {
             setState(() {
               enemyOpacity = updateEnemyOpacity;
             });
+          });
+          Future.delayed(const Duration(seconds: 5), () {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  insetPadding: EdgeInsets.zero,
+                  backgroundColor: Colors.transparent,
+                  child: BattleWinScreen(),
+                );
+              },
+            );
           });
         }
       });
@@ -630,6 +657,17 @@ class _BattleScreenState extends State<BattleScreen>
                       TextButton(
                         onPressed: () {
                           print("Escape...");
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                insetPadding: EdgeInsets.zero,
+                                backgroundColor: Colors.transparent,
+                                child: EscapeDialog(),
+                              );
+                            },
+                          );
                         },
                         style: TextButton.styleFrom(
                           splashFactory: NoSplash.splashFactory,
@@ -772,6 +810,79 @@ class EnemyTwo extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+}
+
+class EscapeDialog extends StatefulWidget {
+  EscapeDialog({Key? key}) : super(key: key);
+
+  @override
+  State<EscapeDialog> createState() => _EscapeDialogState();
+}
+
+class _EscapeDialogState extends State<EscapeDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.deviceWidth * 0.7,
+      height: size.deviceHeight * 0.3,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset("assets/check_cal_dialog.png"),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: size.deviceWidth * 0.6,
+                child: Text(
+                  "本当に逃げますか？\n(この冒険で使用したアイテムは元に戻りません。)",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      setState(() {
+                        // ホーム画面の変数に反映する
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        height: size.deviceHeight * 0.03,
+                        child: Image.asset('assets/battle_dialog_cancel.png')),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      setState(() {
+                        // ホーム画面の変数に反映する
+                      });
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const HomeScreen(title: "RAGOUT")),
+                          (_) => false);
+                    },
+                    child: Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        height: size.deviceHeight * 0.03,
+                        child: Image.asset('assets/battle_dialog_escape.png')),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
