@@ -68,11 +68,11 @@ class _StatusRadarChartState extends State<StatusRadarChart> {
       List<double> list = [];
 
       list.addAll([
-        status.physical,
-        status.power,
-        status.speed,
-        status.widsom,
-        status.luck
+        status.power, //力
+        status.physical, //体力
+        status.speed, //賢さ
+        status.wisdom, //素早さ
+        status.luck //運
       ]);
 
       return list;
@@ -274,9 +274,9 @@ class FiveStatusChart extends StatelessWidget {
         ),
         RadarChart(
           //ここの値を変更する
-          values: [0, 0, 0, 0, 0],
+          values: data,
           labels: ["", "", "", "", ""],
-          maxValue: 50,
+          maxValue: 100,
           fillColor: Colors.blue,
           chartRadiusFactor: 0.7,
         ),

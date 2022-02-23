@@ -29,6 +29,7 @@ class _TutorialState extends State<TutorialScreen> {
   @override
   void initState() {
     gendar();
+    Food.insertFood();
     super.initState();
   }
 
@@ -437,7 +438,6 @@ class _TutorialState extends State<TutorialScreen> {
                     onPressed: () async {
                       FocusScope.of(context).unfocus();
                       _doneTutorial(context);
-                      Food.insertFood();
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

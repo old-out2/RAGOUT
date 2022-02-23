@@ -129,15 +129,25 @@ class _GrowthScreenState extends State<GrowthScreen> {
                     fit: BoxFit.fitWidth,
                   ),
                   SizedBox(
-                      height: 200.0,
+                      height: size.deviceHeight * 0.4,
                       child: Center(
+                          child: SingleChildScrollView(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const SizedBox(height: 40),
+                            // SizedBox(height: (size.deviceHeight * 0.01)),
                             /*
                              * タイトル
                              */
+                            Text(
+                              result["name"].toString(),
+                              style: const TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                locale: Locale("ja", "JP"),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
                             Text(
                               result["cal"].toString() + "Kcal",
                               style: const TextStyle(
@@ -153,7 +163,7 @@ class _GrowthScreenState extends State<GrowthScreen> {
                             const Text(
                               "登録しますか？",
                               style: TextStyle(
-                                fontSize: 16.0,
+                                fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                                 locale: Locale("ja", "JP"),
                               ),
@@ -173,7 +183,7 @@ class _GrowthScreenState extends State<GrowthScreen> {
                             )
                           ],
                         ),
-                      ))
+                      )))
                 ],
               ),
             ],

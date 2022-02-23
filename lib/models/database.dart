@@ -65,7 +65,7 @@ class Food {
         );
         await db.execute(
           //敵のステータス
-          "CREATE TABLE enemy(name INTEGER, HP INTEGER,power INTEGER,speed INTEGER,defenses INTEGER)",
+          "CREATE TABLE enemy(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, HP INTEGER,power INTEGER,speed INTEGER,defense INTEGER,permission BOOLEAN)",
         );
         await db.execute(
           //トロフィー
@@ -92,11 +92,11 @@ class Food {
 
     Map<String, dynamic> status = {
       // "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
-      "power": 0,
-      "physical": 0,
-      "wisdom": 0,
-      "speed": 0,
-      "luck": 0
+      "power": 5,
+      "physical": 5,
+      "wisdom": 5,
+      "speed": 5,
+      "luck": 5
     };
     await db.insert('status', status,
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -229,7 +229,7 @@ class Status {
   // String date;
   double power;
   double physical;
-  double widsom;
+  double wisdom;
   double speed;
   double luck;
 
@@ -238,7 +238,7 @@ class Status {
       // required this.date,
       required this.power,
       required this.physical,
-      required this.widsom,
+      required this.wisdom,
       required this.speed,
       required this.luck});
 
@@ -247,7 +247,7 @@ class Status {
       // 'date': date,
       'power': power,
       'physical': physical,
-      'wisdom': widsom,
+      'wisdom': wisdom,
       "speed": speed,
       "luck": luck
     };
@@ -275,9 +275,9 @@ class Status {
     // return List.generate(maps.length, (i) {
     return Status(
       // date: maps[i]["date"],
-      physical: maps[0]["physical"],
       power: maps[0]["power"],
-      widsom: maps[0]["wisdom"],
+      physical: maps[0]["physical"],
+      wisdom: maps[0]["wisdom"],
       speed: maps[0]["speed"],
       luck: maps[0]["luck"],
     );
@@ -335,5 +335,39 @@ class total {
       'mineral': maps[0]["mineral"],
       'bitamin': maps[0]["bitamin"],
     };
+  }
+}
+
+class Enemy {
+  static Future<Database> get database async {
+    Future<Database> _database = openDatabase(
+      join(await getDatabasesPath(), 'food_database.db'),
+      version: 1,
+    );
+    return _database;
+  }
+
+  static Future<Map<String, dynamic>> getEnemy() async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT id, name, HP ,power ,speed,defense FROM enemy WHERE permission = 1');
+
+    return {
+      'id': maps[0]['id'],
+      'name': maps[0]['name'],
+      'HP': maps[0]["HP"],
+      'power': maps[0]["power"],
+      'speed': maps[0]["speed"],
+      'defense': maps[0]["defense"],
+    };
+  }
+
+  static updateEnemy(int id) async {
+    Database db = await database;
+
+    await db.rawUpdate('UPDATE enemy SET permission = 0 WHERE id = ?', [id]);
+    await db
+        .rawUpdate('UPDATE enemy SET permission = 1 WHERE id = ?', [id + 1]);
   }
 }

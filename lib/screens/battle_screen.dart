@@ -1,4 +1,5 @@
 import 'package:app/importer.dart';
+import 'package:app/models/return.dart';
 
 enum AvatarStatus {
   reversible,
@@ -57,20 +58,39 @@ class _BattleScreenState extends State<BattleScreen>
   EnemyAttackStatus enemyAttackStatus = EnemyAttackStatus.forwadable;
   AvatarDamageStatus avatarDamageStatus = AvatarDamageStatus.forwadable;
   EnemyDamageStatus enemyDamageStatus = EnemyDamageStatus.forwadable;
-  double avatarLp = 100;
+
+  //キャラのHP、幅、1ダメに対しての減少量
+  double avatarLp = 0;
   double avatarLpWidth = 80;
   double avatarWidthRatio = 0;
-  double enemyLp = 200;
+  double avatarpower = 0;
+  double avatarspeed = 0;
+  double avatarwisdom = 0;
+
+  //敵のHP、幅、1ダメに対しての減少量
+  double enemyLp = 0;
   double enemyLpWidth = 80;
   double enemyWidthRatio = 0;
+  double enemypower = 0;
+  double enemyspeed = 0;
+  double enemydefense = 0;
+  int enemyNumber = 0;
+
+  String damage = "";
+
+  //透過
   double avatarOpacity = 1.0;
   double enemyOpacity = 1.0;
+
+  //攻撃後の変更
   double updateAvatarLp = 0;
   double updateAvatarLpWidth = 0;
   double updateAvatarOpacity = 0.0;
   double updateEnemyLp = 0;
   double updateEnemyLpWidth = 0;
   double updateEnemyOpacity = 0.0;
+
+  //各行動に対してのフラグ
   bool enemyAttackFlag = false;
   bool avatarAttackFlag = true;
   bool buttonFlag = true;
@@ -78,11 +98,6 @@ class _BattleScreenState extends State<BattleScreen>
   void calcDamage(double width, double lp, double widthRatio, String target) {
     print("run calcDamage");
     // ダメージ計算関数
-    lp = lp - 100;
-    if (lp < 0) {
-      lp = 0;
-    }
-    width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
 
     // updateLpWidth = width;
     // updateLp = lp;
@@ -90,28 +105,77 @@ class _BattleScreenState extends State<BattleScreen>
     //   updateOpacity = 0.0;
     // }
 
-    if (target == "avatar") {
-      // setState(() {
-      updateAvatarLpWidth = width;
-      updateAvatarLp = lp;
-      if (lp == 0) {
-        updateAvatarOpacity = 0.0;
-      }
-      // });
-    } else if (target == "enemy") {
-      // setState(() {
-      updateEnemyLpWidth = width;
-      updateEnemyLp = lp;
-      if (lp == 0) {
-        updateEnemyOpacity = 0.0;
+    if (lp != 0) {
+      if (target == "avatar") {
+        damage = "-" + (enemypower.toInt()).toString();
+        lp = lp - enemypower;
+        if (lp < 0) {
+          lp = 0;
+        }
+        width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
+        // setState(() {
+        updateAvatarLpWidth = width;
+        updateAvatarLp = lp;
+        if (lp == 0) {
+          updateAvatarOpacity = 0.0;
+        }
+        // });
+      } else if (target == "enemy") {
+        int dp = (avatarpower - enemydefense).toInt();
+        damage = "-" + dp.toString();
+        lp = lp - dp.toDouble();
+        if (lp < 0) {
+          lp = 0;
+        }
+        width = lp * widthRatio < 1 ? 0 : lp * widthRatio;
+        // setState(() {
+        updateEnemyLpWidth = width;
+        updateEnemyLp = lp;
+        if (lp == 0) {
+          updateEnemyOpacity = 0.0;
+        }
       }
       // });
     }
   }
 
+  Future enemyinfo() async {
+    Map<String, dynamic> enemy = await Enemy.getEnemy();
+
+    return enemy;
+  }
+
+  Future avatarinfo() async {
+    Status avatar = await Status.getStatus();
+
+    return avatar;
+  }
+
   @override
   void initState() {
     super.initState();
+    enemyinfo().then((value) {
+      setState(() {
+        enemyLp = value["HP"].toDouble();
+      });
+      // 1ダメージに対して減らす体力ゲージの比率計算
+      enemyWidthRatio = enemyLpWidth / enemyLp;
+      enemypower = value["power"].toDouble();
+      enemyspeed = value["speed"].toDouble();
+      enemydefense = value["defense"].toDouble();
+      enemyNumber = value["id"].toInt();
+    });
+
+    avatarinfo().then((value) {
+      setState(() {
+        avatarLp = value.physical.toDouble();
+      });
+      avatarWidthRatio = avatarLpWidth / avatarLp;
+      avatarpower = value.power.toDouble();
+      avatarspeed = value.speed.toDouble();
+      avatarwisdom = value.wisdom.toDouble();
+    });
+
     avatarController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2100),
@@ -141,10 +205,6 @@ class _BattleScreenState extends State<BattleScreen>
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     )..addStatusListener(enemyDamageStatusListener);
-
-    // 1ダメージに対して減らす体力ゲージの比率計算
-    enemyWidthRatio = enemyLpWidth / enemyLp;
-    avatarWidthRatio = avatarLpWidth / avatarLp;
   }
 
   void avatarStatusListener(AnimationStatus status) {
@@ -177,7 +237,7 @@ class _BattleScreenState extends State<BattleScreen>
 
   void avatarAttackStatusListener(AnimationStatus status) {
     print("avatarStatusListener: $status");
-    if (status == AnimationStatus.completed) {
+    if (status == AnimationStatus.completed && updateEnemyLp != 0) {
       setState(() {
         enemyStatus = EnemyStatus.reversible;
         // 攻撃したら攻撃不可能にする
@@ -427,7 +487,7 @@ class _BattleScreenState extends State<BattleScreen>
                         child: FadeTransition(
                           opacity: damageTween.animate(enemyDamageController),
                           child: Text(
-                            "-100",
+                            damage,
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 30,
@@ -499,7 +559,7 @@ class _BattleScreenState extends State<BattleScreen>
                       child: FadeTransition(
                         opacity: damageTween.animate(avatarDamageController),
                         child: Text(
-                          "-100",
+                          damage,
                           style: TextStyle(
                             color: Colors.red,
                             fontSize: 30,

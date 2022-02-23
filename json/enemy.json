@@ -2,15 +2,17 @@
   {
     "name": "敵1",
     "HP": 5,
-    "power": 5,
-    "speed": 5,
-    "defenses": 5
+    "power": 2,
+    "speed": 4,
+    "defense": 2,
+    "permission": 1
   },
   {
-    "name": "敵1",
+    "name": "敵2",
     "HP": 15,
     "power": 8,
     "speed": 7,
-    "defenses": 5
+    "defense": 5,
+    "permission": 0
   }
 ]
