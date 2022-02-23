@@ -62,10 +62,10 @@ class _BattleScreenState extends State<BattleScreen>
   EnemyAttackStatus enemyAttackStatus = EnemyAttackStatus.forwadable;
   AvatarDamageStatus avatarDamageStatus = AvatarDamageStatus.forwadable;
   EnemyDamageStatus enemyDamageStatus = EnemyDamageStatus.forwadable;
-  double avatarLp = 200;
+  double avatarLp = 500;
   double avatarLpWidth = 80;
   double avatarWidthRatio = 0;
-  double enemyLp = 100;
+  double enemyLp = 500;
   double enemyLpWidth = 80;
   double enemyWidthRatio = 0;
   double avatarOpacity = 1.0;
@@ -79,6 +79,7 @@ class _BattleScreenState extends State<BattleScreen>
   bool enemyAttackFlag = false;
   bool avatarAttackFlag = true;
   bool buttonFlag = true;
+  int attackCount = 0;
 
   void calcDamage(double width, double lp, double widthRatio, String target) {
     print("run calcDamage");
@@ -201,6 +202,7 @@ class _BattleScreenState extends State<BattleScreen>
       setState(() => enemyStatus = EnemyStatus.forwadable);
     } else {
       setState(() => enemyStatus = EnemyStatus.animating);
+      attackCount++;
       enemyController.forward();
     }
     print("---> $enemyStatus");
@@ -262,6 +264,7 @@ class _BattleScreenState extends State<BattleScreen>
       setState(() => avatarStatus = AvatarStatus.forwadable);
     } else {
       setState(() => avatarStatus = AvatarStatus.animating);
+      attackCount++;
       avatarController.forward();
     }
     print("---> $avatarStatus");
@@ -272,6 +275,12 @@ class _BattleScreenState extends State<BattleScreen>
     if (status == AnimationStatus.completed) {
       setState(() => avatarDamageStatus = AvatarDamageStatus.reversible);
       avatarDamageController.reset();
+      if (attackCount == 2) {
+        setState(() {
+          buttonFlag = true;
+          attackCount = 0;
+        });
+      }
     } else if (status == AnimationStatus.dismissed) {
       setState(() => avatarDamageStatus = AvatarDamageStatus.forwadable);
     } else {
@@ -287,6 +296,12 @@ class _BattleScreenState extends State<BattleScreen>
         enemyDamageStatus = EnemyDamageStatus.reversible;
       });
       enemyDamageController.reset();
+      if (attackCount == 2) {
+        setState(() {
+          buttonFlag = true;
+          attackCount = 0;
+        });
+      }
       if (updateEnemyLp > 0) {
         calcDamage(avatarLpWidth, avatarLp, avatarWidthRatio, "avatar");
         enemyAttackController.forward();
@@ -608,12 +623,15 @@ class _BattleScreenState extends State<BattleScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          print("Attack! : $avatarStatus");
-                          if (avatarStatus != AvatarStatus.animating) {
-                            onPressed();
-                          }
-                        },
+                        onPressed: buttonFlag
+                            ? () {
+                                print("Attack! : $avatarStatus");
+                                buttonFlag = false;
+                                if (avatarStatus != AvatarStatus.animating) {
+                                  onPressed();
+                                }
+                              }
+                            : null,
                         style: TextButton.styleFrom(
                           splashFactory: NoSplash.splashFactory,
                         ),
@@ -624,9 +642,12 @@ class _BattleScreenState extends State<BattleScreen>
                       ),
                       // const SizedBox(width: 15),
                       TextButton(
-                        onPressed: () {
-                          print("Masic!");
-                        },
+                        onPressed: buttonFlag
+                            ? () {
+                                print("Masic!");
+                                buttonFlag = false;
+                              }
+                            : null,
                         style: TextButton.styleFrom(
                           splashFactory: NoSplash.splashFactory,
                         ),
@@ -642,9 +663,12 @@ class _BattleScreenState extends State<BattleScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          print("Use the item!");
-                        },
+                        onPressed: buttonFlag
+                            ? () {
+                                print("Use the item!");
+                                buttonFlag = false;
+                              }
+                            : null,
                         style: TextButton.styleFrom(
                           splashFactory: NoSplash.splashFactory,
                         ),
@@ -655,20 +679,22 @@ class _BattleScreenState extends State<BattleScreen>
                       ),
                       // const SizedBox(width: 15),
                       TextButton(
-                        onPressed: () {
-                          print("Escape...");
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.zero,
-                                backgroundColor: Colors.transparent,
-                                child: EscapeDialog(),
-                              );
-                            },
-                          );
-                        },
+                        onPressed: buttonFlag
+                            ? () {
+                                print("Escape...");
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      insetPadding: EdgeInsets.zero,
+                                      backgroundColor: Colors.transparent,
+                                      child: EscapeDialog(),
+                                    );
+                                  },
+                                );
+                              }
+                            : null,
                         style: TextButton.styleFrom(
                           splashFactory: NoSplash.splashFactory,
                         ),
