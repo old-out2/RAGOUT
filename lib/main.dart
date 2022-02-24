@@ -99,6 +99,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   // int targetSteps = 0;
   int remainingSteps = 0;
   int defaultKcal = 0;
+  int nowBornKcal = 0;
+  int remainingKcal = 0;
   double expPoint = 120;
   // DBから取ってくるようにする
   int level = 1;
@@ -131,9 +133,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void init() async {
+    // 現在の消費カロリー
+    // nowBornKcal = await list.現在の消費カロリーを取得する関数
     defaultKcal = await list.calculateDefaultKcal();
+    // 残りの消費カロリー
+    // remainingKcal = defaultKcal - nowBornKcal < 0 ? 0 : defaultKcal - nowBornKcal;
     _nofSteps = await fetchStepData();
-    remainingSteps = await list.calculateTargetSteps();
+    remainingSteps = await list.calculateRemainingSteps(_nofSteps);
   }
 
   @override
@@ -166,8 +172,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       _nofSteps = nowSteps;
       final defaultKcal = await list.calculateDefaultKcal();
       final tagetSteps = await list.calculateTargetSteps();
-      final remainingSteps =
-          tagetSteps - nowSteps < 0 ? 0 : tagetSteps - nowSteps;
+      remainingSteps = tagetSteps - nowSteps < 0 ? 0 : tagetSteps - nowSteps;
 
       print("nowSteps: $nowSteps");
       print("backgroundSteps: $backgroundSteps");

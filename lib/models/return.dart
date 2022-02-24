@@ -77,6 +77,21 @@ class Calorie {
     return steps;
   }
 
+  calculateRemainingSteps(int nowSteps) async {
+    final pref = await SharedPreferences.getInstance();
+    var height = pref.getString('height');
+
+    //歩幅(cm) = 身長 × 0.45
+    var stride = int.parse(height!) * 0.45;
+
+    //１日の歩数合計 = 歩行距離 ÷ 歩幅(m)
+    var steps = 4400 ~/ (stride / 100);
+
+    steps = steps - nowSteps < 0 ? 0 : steps - nowSteps;
+
+    return steps;
+  }
+
   //一日の合計カロリーと栄養をを算出する
   totalcal() async {
     Map<String, String> maps = {};
