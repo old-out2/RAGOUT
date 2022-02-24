@@ -20,11 +20,13 @@ class ManualInputButton extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ManualInputScreen()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const ManualInputScreen()),
+                // );
+
+                Navigator.pop(context);
               },
               child: Image.asset(
                 'assets/manualinput2.png',
