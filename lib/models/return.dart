@@ -32,10 +32,10 @@ class Calorie {
     var weight = pref.getString('weight');
 
     //歩幅(cm) = 身長 × 0.45
-    var stride = int.parse(height!);
+    var stride = int.parse(height!) * 0.45;
 
     //１日の歩数合計 = 歩行距離 ÷ 歩幅(m)
-    var steps = 4400 / stride;
+    var steps = 4400 ~/ (stride / 100);
 
     //標準の消費カロリー
     var defaultcal = 1.05 * 3 * 1.1 * int.parse(weight!);
@@ -47,7 +47,9 @@ class Calorie {
     var calculate = onestep * nofSteps;
     print("onestep: " + onestep.toString());
     //一日の消費カロリーから引いて残った分を返す
-    int residue = (defaultcal - calculate).toInt();
+    int residue = (defaultcal - calculate).toInt() < 0
+        ? 0
+        : (defaultcal - calculate).toInt();
 
     return residue;
   }

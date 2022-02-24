@@ -181,6 +181,8 @@ class _BattleScreenState extends State<BattleScreen>
       avatarwisdom = value.wisdom.toDouble();
     });
 
+    enemyspeed = enemyspeed > avatarspeed ? enemyspeed + 1.0 : enemyspeed - 1.0;
+
     avatarController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2100),
@@ -260,7 +262,11 @@ class _BattleScreenState extends State<BattleScreen>
       setState(() {
         enemyStatus = EnemyStatus.reversible;
         // 攻撃したら攻撃不可能にする
-        avatarAttackFlag = false;
+        if (avatarspeed < enemyspeed) {
+          avatarAttackFlag = false;
+        } else {
+          avatarAttackFlag = true;
+        }
       });
       avatarAttackController.reset();
     } else if (status == AnimationStatus.dismissed) {
@@ -279,7 +285,11 @@ class _BattleScreenState extends State<BattleScreen>
       setState(() {
         avatarStatus = AvatarStatus.reversible;
         // 攻撃されたら攻撃可能にする
-        enemyAttackFlag = true;
+        if (avatarspeed > enemyspeed) {
+          enemyAttackFlag = true;
+        } else {
+          enemyAttackFlag = false;
+        }
         enemyLp = updateEnemyLp;
         enemyLpWidth = updateEnemyLpWidth;
         // 勝ち処理
@@ -306,6 +316,7 @@ class _BattleScreenState extends State<BattleScreen>
         }
       });
       enemyController.reset();
+      calcDamage(enemyLpWidth, enemyLp, enemyWidthRatio, "enemy");
     } else if (status == AnimationStatus.dismissed) {
       setState(() => avatarStatus = AvatarStatus.forwadable);
     } else {
@@ -347,6 +358,10 @@ class _BattleScreenState extends State<BattleScreen>
           attackCount = 0;
         });
       }
+      if (updateAvatarLp > 0) {
+        calcDamage(enemyLpWidth, enemyLp, enemyWidthRatio, "enemy");
+        avatarAttackController.forward();
+      }
     } else if (status == AnimationStatus.dismissed) {
       setState(() => avatarDamageStatus = AvatarDamageStatus.forwadable);
     } else {
@@ -383,8 +398,15 @@ class _BattleScreenState extends State<BattleScreen>
   void onPressed() async {
     print("run onPressed");
     // controller.forward();
-    calcDamage(enemyLpWidth, enemyLp, enemyWidthRatio, "enemy");
-    avatarAttackController.forward();
+    if (avatarspeed > enemyspeed) {
+      calcDamage(enemyLpWidth, enemyLp, enemyWidthRatio, "enemy");
+      avatarAttackController.forward();
+    } else {
+      enemyAttackFlag = true;
+      avatarAttackFlag = false;
+      calcDamage(avatarLpWidth, avatarLp, avatarWidthRatio, "avatar");
+      enemyAttackController.forward();
+    }
     // if (avatarStatus == AvatarStatus.reversible) {
     //   print("reverse!");
     //   avatarController.reverse();

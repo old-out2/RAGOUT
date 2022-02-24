@@ -11,7 +11,7 @@
     "name": "敵2",
     "HP": 10,
     "power": 3,
-    "speed": 5,
+    "speed": 6,
     "defense": 2,
     "permission": 0
   }
