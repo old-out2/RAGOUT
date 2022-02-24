@@ -1180,7 +1180,7 @@ class _EscapeDialogState extends State<EscapeDialog> {
               SizedBox(
                 width: size.deviceWidth * 0.6,
                 child: Text(
-                  "本当に逃げますか？\n(この冒険で使用したアイテムは元に戻りません。)",
+                  "本当に逃げますか？",
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -1200,7 +1200,7 @@ class _EscapeDialogState extends State<EscapeDialog> {
                     },
                     child: Container(
                         margin: const EdgeInsets.only(top: 20),
-                        height: size.deviceHeight * 0.03,
+                        height: size.deviceHeight * 0.025,
                         child: Image.asset('assets/battle_dialog_cancel.png')),
                   ),
                   TextButton(
@@ -1217,7 +1217,7 @@ class _EscapeDialogState extends State<EscapeDialog> {
                     },
                     child: Container(
                         margin: const EdgeInsets.only(top: 20),
-                        height: size.deviceHeight * 0.03,
+                        height: size.deviceHeight * 0.025,
                         child: Image.asset('assets/battle_dialog_escape.png')),
                   ),
                 ],
