@@ -30,8 +30,8 @@ class _BattleWinScreenState extends State<BattleWinScreen> {
             child: Image.asset('assets/avatar_win.png'),
           ),
           SizedBox(
-            height: size.deviceHeight * 0.2,
-            // width: size.deviceWidth * 0.8,
+            // height: size.deviceHeight * 0.2,
+            width: size.deviceWidth * 0.8,
             child: Image.asset('assets/battle_win_text.png'),
           ),
           TextButton(
