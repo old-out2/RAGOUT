@@ -35,6 +35,12 @@ enum AvatarDamageStatus {
   forwadable,
 }
 
+enum AvatarHealingStatus {
+  reversible,
+  animating,
+  forwadable,
+}
+
 enum EnemyDamageStatus {
   reversible,
   animating,
@@ -55,16 +61,29 @@ class _BattleScreenState extends State<BattleScreen>
   late final AnimationController enemyController;
   late final AnimationController enemyAttackController;
   late final AnimationController avatarDamageController;
+  late final AnimationController avatarHealingController;
   late final AnimationController enemyDamageController;
   AvatarStatus avatarStatus = AvatarStatus.forwadable;
   AvatarAttackStatus avatarAttackStatus = AvatarAttackStatus.forwadable;
   EnemyStatus enemyStatus = EnemyStatus.forwadable;
   EnemyAttackStatus enemyAttackStatus = EnemyAttackStatus.forwadable;
   AvatarDamageStatus avatarDamageStatus = AvatarDamageStatus.forwadable;
+  AvatarHealingStatus avatarHealingStatus = AvatarHealingStatus.forwadable;
   EnemyDamageStatus enemyDamageStatus = EnemyDamageStatus.forwadable;
+
+  // 道具セクション
+  var selectedIndex = -1;
+  int itemCount = 0;
+  final itemList = [
+    {"index": 0, "imageName": "item_healing_s.png"},
+    {"index": 1, "imageName": "item_healing_m.png"},
+    {"index": 2, "imageName": "item_healing_l.png"},
+    // {"index": 3, "imageName": "item_antidote.png"},
+  ];
 
   //キャラのHP、幅、1ダメに対しての減少量
   double avatarLp = 0;
+  double avatarMaxLp = 0;
   double avatarLpWidth = 80;
   double avatarWidthRatio = 0;
   double avatarpower = 0;
@@ -73,6 +92,7 @@ class _BattleScreenState extends State<BattleScreen>
 
   //敵のHP、幅、1ダメに対しての減少量
   double enemyLp = 0;
+  double enemyMaxLp = 0;
   double enemyLpWidth = 80;
   double enemyWidthRatio = 0;
   double enemypower = 0;
@@ -81,6 +101,7 @@ class _BattleScreenState extends State<BattleScreen>
   int enemyNumber = 0;
 
   String damage = "";
+  int healing = 0;
 
   //透過
   double avatarOpacity = 1.0;
@@ -98,6 +119,7 @@ class _BattleScreenState extends State<BattleScreen>
   bool enemyAttackFlag = false;
   bool avatarAttackFlag = true;
   bool buttonFlag = true;
+  bool itemFlag = false;
   int attackCount = 0;
 
   void calcDamage(double width, double lp, double widthRatio, String target) {
@@ -144,6 +166,38 @@ class _BattleScreenState extends State<BattleScreen>
     }
   }
 
+  void calcHealing(double width, double lp, double widthRatio, String target) {
+    if (target == "avatar") {
+      switch (itemList[selectedIndex]["index"]) {
+        case 0:
+          healing = 10;
+          print(avatarLp);
+          healing = avatarMaxLp < healing + avatarLp.toInt()
+              ? avatarMaxLp.toInt() - avatarLp.toInt()
+              : healing;
+          setState(() {});
+          break;
+        case 1:
+          healing = 50;
+          healing = avatarMaxLp < healing + avatarLp.toInt()
+              ? avatarMaxLp.toInt() - avatarLp.toInt()
+              : healing;
+          break;
+        case 2:
+          healing = 100;
+          healing = avatarMaxLp < healing + avatarLp.toInt()
+              ? avatarMaxLp.toInt() - avatarLp.toInt()
+              : healing;
+          break;
+        default:
+      }
+      lp += healing;
+      width = lp * widthRatio;
+      updateAvatarLpWidth = width;
+      updateAvatarLp = lp;
+    }
+  }
+
   Future enemyinfo() async {
     Map<String, dynamic> enemy = await Enemy.getEnemy();
 
@@ -162,6 +216,7 @@ class _BattleScreenState extends State<BattleScreen>
     enemyinfo().then((value) {
       setState(() {
         enemyLp = value["HP"].toDouble();
+        enemyMaxLp = enemyLp;
       });
       // 1ダメージに対して減らす体力ゲージの比率計算
       enemyWidthRatio = enemyLpWidth / enemyLp;
@@ -174,6 +229,7 @@ class _BattleScreenState extends State<BattleScreen>
     avatarinfo().then((value) {
       setState(() {
         avatarLp = value.physical.toDouble();
+        avatarMaxLp = avatarLp;
       });
       avatarWidthRatio = avatarLpWidth / avatarLp;
       avatarpower = value.power.toDouble();
@@ -205,6 +261,11 @@ class _BattleScreenState extends State<BattleScreen>
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     )..addStatusListener(avatarDamageStatusListener);
+
+    avatarHealingController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..addStatusListener(avatarHealingStatusListener);
 
     enemyDamageController = AnimationController(
       vsync: this,
@@ -351,6 +412,21 @@ class _BattleScreenState extends State<BattleScreen>
       setState(() => avatarDamageStatus = AvatarDamageStatus.forwadable);
     } else {
       setState(() => avatarDamageStatus = AvatarDamageStatus.animating);
+    }
+    print("---> $enemyDamageStatus");
+  }
+
+  void avatarHealingStatusListener(AnimationStatus status) {
+    print("avatarHealingStatusListener: $status");
+    if (status == AnimationStatus.completed) {
+      setState(() => avatarHealingStatus = AvatarHealingStatus.reversible);
+      avatarHealingController.reset();
+      avatarLp = updateAvatarLp;
+      avatarLpWidth = updateAvatarLpWidth;
+    } else if (status == AnimationStatus.dismissed) {
+      setState(() => avatarHealingStatus = AvatarHealingStatus.forwadable);
+    } else {
+      setState(() => avatarHealingStatus = AvatarHealingStatus.animating);
     }
     print("---> $enemyDamageStatus");
   }
@@ -510,6 +586,25 @@ class _BattleScreenState extends State<BattleScreen>
       ),
     ]);
 
+    var healingTween = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: ConstantTween(0.0),
+        weight: 8,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.0),
+        weight: 0.5,
+      ),
+      TweenSequenceItem(
+        tween: ConstantTween(1.0),
+        weight: 5,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 0.0),
+        weight: 2,
+      ),
+    ]);
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -518,263 +613,417 @@ class _BattleScreenState extends State<BattleScreen>
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Center(
-                      child: Container(
-                        alignment: Alignment.bottomCenter,
-                        width: 100,
-                        height: 100,
-                        // color: Colors.blueAccent,
-                        child: FadeTransition(
-                          opacity: damageTween.animate(enemyDamageController),
-                          child: Text(
-                            damage,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
+                    Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            alignment: Alignment.bottomCenter,
+                            width: 100,
+                            height: 100,
+                            // color: Colors.blueAccent,
+                            child: FadeTransition(
+                              opacity:
+                                  damageTween.animate(enemyDamageController),
+                              child: Text(
+                                damage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Text(
-                      "${enemyLp.toInt()}",
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 13),
-                          color: Colors.black,
-                          width: 80,
-                          height: 10,
+                        Text(
+                          "${enemyLp.toInt()}//${enemyMaxLp.toInt()}",
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
-                        AnimatedContainer(
-                          duration: const Duration(seconds: 1),
-                          margin: EdgeInsets.only(left: 13),
-                          color: Colors.orange,
-                          width: enemyLpWidth,
-                          height: 10,
+                        Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(left: 13),
+                              color: Colors.black,
+                              width: 80,
+                              height: 10,
+                            ),
+                            AnimatedContainer(
+                              duration: const Duration(seconds: 1),
+                              margin: EdgeInsets.only(left: 13),
+                              color: Colors.orange,
+                              width: enemyLpWidth,
+                              height: 10,
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              width: 105,
+                              child: Image.asset("assets/battle_lifepoint.png"),
+                            ),
+                          ],
                         ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 105,
-                          child: Image.asset("assets/battle_lifepoint.png"),
+                        SizedBox(height: 20),
+                        AnimatedOpacity(
+                          duration: const Duration(seconds: 2),
+                          opacity: enemyOpacity,
+                          child: Container(
+                            // color: Colors.red,
+                            width: 170,
+                            height: 200,
+                            child: AlignTransition(
+                              // ↓ Animation<AlignmentGeometry>をセット
+                              alignment: enemyAttackFlag
+                                  ? enemyAttackTween
+                                      .animate(enemyAttackController)
+                                  : enemyTween.animate(enemyController),
+                              child: SizedBox(
+                                  height: size.deviceHeight * 0.15,
+                                  child:
+                                      Image.asset("assets/battle_enemy1.png")),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    AnimatedOpacity(
-                      duration: const Duration(seconds: 2),
-                      opacity: enemyOpacity,
-                      child: Container(
-                        // color: Colors.red,
-                        width: 170,
-                        height: 200,
-                        child: AlignTransition(
-                          // ↓ Animation<AlignmentGeometry>をセット
-                          alignment: enemyAttackFlag
-                              ? enemyAttackTween.animate(enemyAttackController)
-                              : enemyTween.animate(enemyController),
-                          child: SizedBox(
-                              height: size.deviceHeight * 0.15,
-                              child: Image.asset("assets/battle_enemy1.png")),
+                    SizedBox(width: size.deviceWidth * 0.08),
+                    Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              alignment: Alignment.bottomCenter,
+                              width: 100,
+                              height: 100,
+                              // color: Colors.blueAccent,
+                              child: FadeTransition(
+                                opacity:
+                                    damageTween.animate(avatarDamageController),
+                                child: Text(
+                                  damage,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.bottomCenter,
+                              width: 100,
+                              height: 100,
+                              // color: Colors.blueAccent,
+                              child: FadeTransition(
+                                opacity: healingTween
+                                    .animate(avatarHealingController),
+                                child: Text(
+                                  '+$healing',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent[400],
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                        Text(
+                          "${avatarLp.toInt()}/${avatarMaxLp.toInt()}",
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(left: 13),
+                              color: Colors.black,
+                              width: 80,
+                              height: 10,
+                            ),
+                            AnimatedContainer(
+                              duration: const Duration(seconds: 1),
+                              margin: EdgeInsets.only(left: 13),
+                              color: Colors.orange,
+                              width: avatarLpWidth,
+                              height: 10,
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              width: 105,
+                              child: Image.asset("assets/battle_lifepoint.png"),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        AnimatedOpacity(
+                          duration: const Duration(seconds: 2),
+                          opacity: avatarOpacity,
+                          child: Container(
+                            // color: Colors.red,
+                            width: 170,
+                            height: 200,
+                            child: AlignTransition(
+                              // ↓ Animation<AlignmentGeometry>をセット
+                              alignment: avatarAttackFlag
+                                  ? avatarAttackTween
+                                      .animate(avatarAttackController)
+                                  : avatarTween.animate(avatarController),
+                              child: SizedBox(
+                                  height: size.deviceHeight * 0.2,
+                                  child:
+                                      Image.asset("assets/battle_avatar.png")),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(width: size.deviceWidth * 0.08),
-                Column(
+                // SizedBox(height: size.deviceHeight * 0.05),
+                Stack(
+                  alignment: Alignment.bottomCenter,
                   children: [
                     Container(
-                      alignment: Alignment.bottomCenter,
-                      width: 100,
-                      height: 100,
-                      // color: Colors.blueAccent,
-                      child: FadeTransition(
-                        opacity: damageTween.animate(avatarDamageController),
-                        child: Text(
-                          damage,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 229, 229, 229),
+                        border: Border.all(
+                          color: Color.fromARGB(255, 77, 77, 77),
+                          width: 5,
                         ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                    Text(
-                      "${avatarLp.toInt()}",
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 13),
-                          color: Colors.black,
-                          width: 80,
-                          height: 10,
-                        ),
-                        AnimatedContainer(
-                          duration: const Duration(seconds: 1),
-                          margin: EdgeInsets.only(left: 13),
-                          color: Colors.orange,
-                          width: avatarLpWidth,
-                          height: 10,
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 105,
-                          child: Image.asset("assets/battle_lifepoint.png"),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    AnimatedOpacity(
-                      duration: const Duration(seconds: 2),
-                      opacity: avatarOpacity,
-                      child: Container(
-                        // color: Colors.red,
-                        width: 170,
-                        height: 200,
-                        child: AlignTransition(
-                          // ↓ Animation<AlignmentGeometry>をセット
-                          alignment: avatarAttackFlag
-                              ? avatarAttackTween
-                                  .animate(avatarAttackController)
-                              : avatarTween.animate(avatarController),
-                          child: SizedBox(
-                              height: size.deviceHeight * 0.2,
-                              child: Image.asset("assets/battle_avatar.png")),
-                        ),
+                      margin: const EdgeInsets.only(
+                          top: 20, left: 30, bottom: 80, right: 30),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: buttonFlag
+                                    ? () {
+                                        print("Attack! : $avatarStatus");
+                                        buttonFlag = false;
+                                        if (avatarStatus !=
+                                            AvatarStatus.animating) {
+                                          onPressed();
+                                        }
+                                      }
+                                    : null,
+                                style: TextButton.styleFrom(
+                                  splashFactory: NoSplash.splashFactory,
+                                ),
+                                child: SizedBox(
+                                  width: size.deviceWidth * 0.32,
+                                  child:
+                                      Image.asset("assets/battle_attack.png"),
+                                ),
+                              ),
+                              // const SizedBox(width: 15),
+                              TextButton(
+                                onPressed: buttonFlag
+                                    ? () {
+                                        print("Masic!");
+                                        buttonFlag = false;
+                                      }
+                                    : null,
+                                style: TextButton.styleFrom(
+                                  splashFactory: NoSplash.splashFactory,
+                                ),
+                                child: SizedBox(
+                                  width: size.deviceWidth * 0.32,
+                                  child: Image.asset("assets/battle_masic.png"),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: buttonFlag
+                                    ? () {
+                                        print("Use the item!");
+                                        setState(() {
+                                          itemFlag = true;
+                                        });
+                                      }
+                                    : null,
+                                style: TextButton.styleFrom(
+                                  splashFactory: NoSplash.splashFactory,
+                                ),
+                                child: SizedBox(
+                                  width: size.deviceWidth * 0.32,
+                                  child: Image.asset("assets/battle_item.png"),
+                                ),
+                              ),
+                              // const SizedBox(width: 15),
+                              TextButton(
+                                onPressed: buttonFlag
+                                    ? () {
+                                        print("Escape...");
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              insetPadding: EdgeInsets.zero,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              child: EscapeDialog(),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    : null,
+                                style: TextButton.styleFrom(
+                                  splashFactory: NoSplash.splashFactory,
+                                ),
+                                child: SizedBox(
+                                  width: size.deviceWidth * 0.32,
+                                  child:
+                                      Image.asset("assets/battle_escape.png"),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // const SizedBox(height: 40),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-            // SizedBox(height: size.deviceHeight * 0.05),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.black38,
-                border: Border.all(
-                  color: Colors.black,
-                  width: 3,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              margin: const EdgeInsets.only(
-                  top: 20, left: 30, bottom: 80, right: 30),
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: buttonFlag
-                            ? () {
-                                print("Attack! : $avatarStatus");
-                                buttonFlag = false;
-                                if (avatarStatus != AvatarStatus.animating) {
-                                  onPressed();
-                                }
-                              }
-                            : null,
-                        style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory,
-                        ),
-                        child: SizedBox(
-                          width: size.deviceWidth * 0.32,
-                          child: Image.asset("assets/battle_attack.png"),
-                        ),
+            // 道具使用時
+            itemFlag
+                ? Container(
+                    height: size.deviceHeight * 0.35,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 229, 229, 229),
+                      border: Border.all(
+                        color: Color.fromARGB(255, 77, 77, 77),
+                        width: 5,
                       ),
-                      // const SizedBox(width: 15),
-                      TextButton(
-                        onPressed: buttonFlag
-                            ? () {
-                                print("Masic!");
-                                buttonFlag = false;
-                              }
-                            : null,
-                        style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    margin: const EdgeInsets.only(
+                        top: 20, left: 30, bottom: 80, right: 30),
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: size.deviceHeight * 0.35,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 229, 229, 229),
+                            border: Border.all(
+                              color: Color.fromARGB(255, 77, 77, 77),
+                              width: 5,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(right: 10, left: 10),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                for (var item in itemList)
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedIndex = item['index'] as int;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(boxShadow: [
+                                        BoxShadow(
+                                            color: selectedIndex ==
+                                                    item['index']
+                                                ? Colors.yellow.withOpacity(0.8)
+                                                : Colors.transparent,
+                                            blurRadius: 1.0,
+                                            offset: Offset(0.0, 0.5)),
+                                      ]),
+                                      margin:
+                                          EdgeInsets.only(top: 3, bottom: 3),
+                                      padding: EdgeInsets.all(5),
+                                      width: size.deviceWidth * 0.35,
+                                      child: Image.asset(
+                                          'assets/${item['imageName']}'),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                         ),
-                        child: SizedBox(
-                          width: size.deviceWidth * 0.32,
-                          child: Image.asset("assets/battle_masic.png"),
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: size.deviceWidth * 0.29,
+                              child:
+                                  Image.asset('assets/battle_itemicon_bag.png'),
+                            ),
+                            SizedBox(height: 20),
+                            TextButton(
+                              onPressed: () {
+                                print("使う");
+                                print(itemList[selectedIndex]);
+                                itemFlag = false;
+                                calcHealing(avatarLpWidth, avatarLp,
+                                    avatarWidthRatio, "avatar");
+                                avatarHealingController.forward();
+                                // if (itemList[selectedIndex]) {}
+                              },
+                              style: TextButton.styleFrom(
+                                splashFactory: NoSplash.splashFactory,
+                              ),
+                              child: SizedBox(
+                                width: size.deviceWidth * 0.25,
+                                child: Image.asset(
+                                    "assets/battle_itembutton_use.png"),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                print("戻る");
+                                setState(() {
+                                  itemFlag = false;
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                splashFactory: NoSplash.splashFactory,
+                              ),
+                              child: SizedBox(
+                                width: size.deviceWidth * 0.25,
+                                child: Image.asset(
+                                    "assets/battle_itembutton_back.png"),
+                              ),
+                            ),
+                            // const SizedBox(height: 40),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  // const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: buttonFlag
-                            ? () {
-                                print("Use the item!");
-                                buttonFlag = false;
-                              }
-                            : null,
-                        style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory,
-                        ),
-                        child: SizedBox(
-                          width: size.deviceWidth * 0.32,
-                          child: Image.asset("assets/battle_item.png"),
-                        ),
-                      ),
-                      // const SizedBox(width: 15),
-                      TextButton(
-                        onPressed: buttonFlag
-                            ? () {
-                                print("Escape...");
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                      insetPadding: EdgeInsets.zero,
-                                      backgroundColor: Colors.transparent,
-                                      child: EscapeDialog(),
-                                    );
-                                  },
-                                );
-                              }
-                            : null,
-                        style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory,
-                        ),
-                        child: SizedBox(
-                          width: size.deviceWidth * 0.32,
-                          child: Image.asset("assets/battle_escape.png"),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // const SizedBox(height: 40),
-                ],
-              ),
-            ),
+                      ],
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
