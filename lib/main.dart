@@ -710,19 +710,18 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
           var data = snapshot.data;
           if (data != null) {
             return SizedBox(
-              // width: size.deviceWidth * 0.9,
-              height: size.deviceHeight * 0.4,
+              height: size.deviceHeight * 0.5,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Image.asset("assets/check_cal_dialog.png"),
+                  Image.asset("assets/dialog_achivement_frame.png"),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
                         width: size.deviceWidth * 0.8,
                         child: Text(
-                          "今日の目標消費カロリーを達成しました！\n報酬として、昨日食べた食品の栄養素\nタンパク質：${data["protein"]}g\n脂質：${data["lipids"]}g\n炭水化物：${data["carb"]}g\nビタミン：${data["bitamin"]}mg\nミネラル：${data["mineral"]}mg\nが${widget.name}さんに付与されます。",
+                          "目標消費カロリーを達成しました！\n報酬として、昨日食べた食品の栄養素\n\nタンパク質：${data["protein"]}g\n脂質：${data["lipids"]}g\n炭水化物：${data["carb"]}g\nビタミン：${data["bitamin"]}mg\nミネラル：${data["mineral"]}mg\n\nが${widget.name}さんに付与されます。",
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
