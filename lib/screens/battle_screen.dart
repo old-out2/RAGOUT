@@ -1,7 +1,7 @@
 import 'package:app/importer.dart';
 import 'package:app/models/return.dart';
 import 'package:app/screens/battle_win_screen.dart';
-
+import 'dart:math' as math;
 import '../main.dart';
 import 'battle_lose_screen.dart';
 
@@ -181,7 +181,14 @@ class _BattleScreenState extends State<BattleScreen>
       avatarwisdom = value.wisdom.toDouble();
     });
 
-    enemyspeed = enemyspeed > avatarspeed ? enemyspeed + 1.0 : enemyspeed - 1.0;
+    //同速の場合
+    if (enemyspeed == avatarspeed) {
+      var rand = math.Random();
+      int avatarDice = rand.nextInt(100);
+      int enemyDice = rand.nextInt(100);
+
+      enemyspeed = avatarDice < enemyDice ? enemyspeed + 1.0 : enemyspeed - 1.0;
+    }
 
     avatarController = AnimationController(
       vsync: this,
