@@ -1,0 +1,35 @@
+[
+  {
+    "name": "新人戦士",
+    "permission": 1
+  },
+  {
+    "name": "街の戦士",
+    "permission": 0
+  },
+  {
+    "name": "伝説の戦士",
+    "permission": 0,
+    "enemyid": 2
+  },
+  {
+    "name": "健康第一",
+    "permission": 0
+  },
+  {
+    "name": "称号コレクター",
+    "permission": 0
+  },
+  {
+    "name": "和食マスター",
+    "permission": 0
+  },
+  {
+    "name": "洋食マスター",
+    "permission": 0
+  },
+  {
+    "name": "中華マスター",
+    "permission": 0
+  }
+]

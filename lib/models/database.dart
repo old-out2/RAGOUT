@@ -69,7 +69,7 @@ class Food {
         );
         await db.execute(
           //トロフィー
-          "CREATE TABLE trophy(name TEXT, permission BOOLEAN)",
+          "CREATE TABLE trophy(name TEXT, permission BOOLEAN, enemyid INTEGER, FOREIGN KEY(enemyid) REFERENCES enemy(id))",
         );
       },
       version: 1,
@@ -89,6 +89,9 @@ class Food {
 
     String enemy = await rootBundle.loadString('json/enemy.json');
     List<dynamic> enemyArray = jsonDecode(enemy);
+
+    String trophy = await rootBundle.loadString('json/trophy.json');
+    List<dynamic> trophyArray = jsonDecode(trophy);
 
     Map<String, dynamic> status = {
       // "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
@@ -119,6 +122,14 @@ class Food {
     for (var item in enemyArray) {
       await db.insert(
         'enemy',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    for (var item in trophyArray) {
+      await db.insert(
+        'trophy',
         item,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -388,5 +399,31 @@ class Enemy {
     await db.rawUpdate('UPDATE enemy SET permission = 0 WHERE id = ?', [id]);
     await db
         .rawUpdate('UPDATE enemy SET permission = 1 WHERE id = ?', [id + 1]);
+  }
+}
+
+class trophy {
+  static Future<Database> get database async {
+    Future<Database> _database = openDatabase(
+      join(await getDatabasesPath(), 'food_database.db'),
+      version: 1,
+    );
+    return _database;
+  }
+
+  static Future<List<Map<String, dynamic>>> gettrophy() async {
+    Database db = await database;
+
+    List<Map<String, dynamic>> maps =
+        await db.rawQuery('SELECT name FROM enemy WHERE permission = 1');
+
+    return maps;
+  }
+
+  static updateEnemy(String name) async {
+    Database db = await database;
+
+    await db
+        .rawUpdate('UPDATE enemy SET permission = 1 WHERE name = ?', [name]);
   }
 }
