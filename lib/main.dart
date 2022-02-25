@@ -104,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   double expPoint = 120;
   // DBから取ってくるようにする
   int level = 1;
+  String name = ""; //ユーザー名
   String title = "新人戦士";
   // 歩数取得用
   HealthFactory health = HealthFactory();
@@ -136,6 +137,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _nofSteps = await fetchStepData();
     // 現在の消費カロリー
     defaultKcal = await list.calculateKcal(_nofSteps); //現在の消費カロリーを取得する関数
+    final prefs = await SharedPreferences.getInstance(); //プレファレンスにアクセス
+    name = prefs.getString('name')!; //名前を取得する
+    print(name);
     // defaultKcal = await list.calculateDefaultKcal();
     // print("$defaultKcal,$nowBornKcal");
     // 残りの消費カロリー
@@ -667,13 +671,13 @@ class _GoalAchievementDialogState extends State<GoalAchievementDialog> {
 
   //取得する栄養素
   Future<Map<String, dynamic>> getnutrient() async {
-    final date = DateTime.now();
-    String now =
-        DateFormat('yyyy/MM/dd').format(date.add(const Duration(days: 1) * -1));
+    final now = DateTime.now();
+    String yesterday =
+        DateFormat('yyyy/MM/dd').format(now.add(const Duration(days: 1) * -1));
 
-    var nutrient = await total.getTotal(now);
+    var nutrient = await total.getTotal(yesterday);
     var status = await Status.getStatus();
-    List Amount = await Calorie().requiredAmount(now);
+    List Amount = await Calorie().requiredAmount(yesterday);
 
     for (var element in Amount) {
       var index = Amount.indexOf(element);
