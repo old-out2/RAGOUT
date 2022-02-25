@@ -142,21 +142,21 @@ class _GrowthScreenState extends State<GrowthScreen> {
                             Text(
                               result["name"].toString(),
                               style: const TextStyle(
-                                fontSize: 30.0,
+                                fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                                 locale: Locale("ja", "JP"),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Text(
-                              result["cal"].toString() + "Kcal",
+                              "${result["cal"].toString()}Kcal",
                               style: const TextStyle(
                                 fontSize: 30.0,
                                 fontWeight: FontWeight.bold,
                                 locale: Locale("ja", "JP"),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             /*
                              * メッセージ
                              */
