@@ -95,6 +95,7 @@ class _BattleScreenState extends State<BattleScreen>
   double enemyMaxLp = 0;
   double enemyLpWidth = 80;
   double enemyWidthRatio = 0;
+  int enemyId = 0;
   double enemypower = 0;
   double enemyspeed = 0;
   double enemydefense = 0;
@@ -218,6 +219,7 @@ class _BattleScreenState extends State<BattleScreen>
         enemyLp = value["HP"].toDouble();
         enemyMaxLp = enemyLp;
       });
+      enemyId = value["id"];
       // 1ダメージに対して減らす体力ゲージの比率計算
       enemyWidthRatio = enemyLpWidth / enemyLp;
       enemypower = value["power"].toDouble();
@@ -607,9 +609,11 @@ class _BattleScreenState extends State<BattleScreen>
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/bgimage_battle1.png'),
+            image: enemyId == 1
+                ? AssetImage('assets/bgimage_battle1.png')
+                : AssetImage('assets/bgimage_battle2.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -621,6 +625,7 @@ class _BattleScreenState extends State<BattleScreen>
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Column(
                       children: [
@@ -674,14 +679,14 @@ class _BattleScreenState extends State<BattleScreen>
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        // SizedBox(height: 20),
                         AnimatedOpacity(
                           duration: const Duration(seconds: 2),
                           opacity: enemyOpacity,
                           child: Container(
                             // color: Colors.red,
-                            width: 170,
-                            height: 200,
+                            width: enemyId == 1 ? 170 : 250,
+                            height: enemyId == 1 ? 200 : 270,
                             child: AlignTransition(
                               // ↓ Animation<AlignmentGeometry>をセット
                               alignment: enemyAttackFlag
@@ -689,9 +694,13 @@ class _BattleScreenState extends State<BattleScreen>
                                       .animate(enemyAttackController)
                                   : enemyTween.animate(enemyController),
                               child: SizedBox(
-                                  height: size.deviceHeight * 0.15,
-                                  child:
-                                      Image.asset("assets/battle_enemy1.png")),
+                                height: enemyId == 1
+                                    ? size.deviceHeight * 0.15
+                                    : size.deviceHeight * 0.2,
+                                child: enemyId == 1
+                                    ? Image.asset("assets/battle_enemy1.png")
+                                    : Image.asset("assets/battle_enemy2.png"),
+                              ),
                             ),
                           ),
                         ),
@@ -770,13 +779,13 @@ class _BattleScreenState extends State<BattleScreen>
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        // SizedBox(height: 20),
                         AnimatedOpacity(
                           duration: const Duration(seconds: 2),
                           opacity: avatarOpacity,
                           child: Container(
                             // color: Colors.red,
-                            width: 170,
+                            width: enemyId == 1 ? 170 : 120,
                             height: 200,
                             child: AlignTransition(
                               // ↓ Animation<AlignmentGeometry>をセット
@@ -785,7 +794,9 @@ class _BattleScreenState extends State<BattleScreen>
                                       .animate(avatarAttackController)
                                   : avatarTween.animate(avatarController),
                               child: SizedBox(
-                                  height: size.deviceHeight * 0.2,
+                                  height: enemyId == 1
+                                      ? size.deviceHeight * 0.2
+                                      : size.deviceHeight * 0.15,
                                   child:
                                       Image.asset("assets/battle_avatar.png")),
                             ),
