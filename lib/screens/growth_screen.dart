@@ -125,11 +125,11 @@ class _GrowthScreenState extends State<GrowthScreen> {
               Stack(
                 children: <Widget>[
                   Image.asset(
-                    "assets/dialog.png",
+                    "assets/check_cal_dialog.png",
                     fit: BoxFit.fitWidth,
                   ),
                   SizedBox(
-                      height: size.deviceHeight * 0.4,
+                      height: size.deviceHeight * 0.35,
                       child: Center(
                           child: SingleChildScrollView(
                         child: Column(
