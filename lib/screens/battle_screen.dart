@@ -120,6 +120,7 @@ class _BattleScreenState extends State<BattleScreen>
   bool enemyAttackFlag = false;
   bool avatarAttackFlag = true;
   bool buttonFlag = true;
+  bool itemCanUseFlag = true;
   bool itemFlag = false;
   int attackCount = 0;
 
@@ -856,41 +857,73 @@ class _BattleScreenState extends State<BattleScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextButton(
-                                onPressed: buttonFlag
-                                    ? () {
-                                        print("Attack! : $avatarStatus");
-                                        buttonFlag = false;
-                                        if (avatarStatus !=
-                                            AvatarStatus.animating) {
-                                          onPressed();
-                                        }
-                                      }
-                                    : null,
-                                style: TextButton.styleFrom(
-                                  splashFactory: NoSplash.splashFactory,
-                                ),
-                                child: SizedBox(
-                                  width: size.deviceWidth * 0.32,
-                                  child:
-                                      Image.asset("assets/battle_attack.png"),
-                                ),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: buttonFlag
+                                        ? () {
+                                            print("Attack! : $avatarStatus");
+                                            buttonFlag = false;
+                                            if (avatarStatus !=
+                                                AvatarStatus.animating) {
+                                              onPressed();
+                                            }
+                                          }
+                                        : null,
+                                    style: TextButton.styleFrom(
+                                      splashFactory: NoSplash.splashFactory,
+                                    ),
+                                    child: SizedBox(
+                                      width: size.deviceWidth * 0.32,
+                                      child: Image.asset(
+                                          "assets/battle_attack.png"),
+                                    ),
+                                  ),
+                                  buttonFlag
+                                      ? Container()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black38,
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          width: size.deviceWidth * 0.32,
+                                          height: 50,
+                                        ),
+                                ],
                               ),
                               // const SizedBox(width: 15),
-                              TextButton(
-                                onPressed: buttonFlag
-                                    ? () {
-                                        print("Masic!");
-                                        buttonFlag = false;
-                                      }
-                                    : null,
-                                style: TextButton.styleFrom(
-                                  splashFactory: NoSplash.splashFactory,
-                                ),
-                                child: SizedBox(
-                                  width: size.deviceWidth * 0.32,
-                                  child: Image.asset("assets/battle_masic.png"),
-                                ),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: null,
+                                    style: TextButton.styleFrom(
+                                      splashFactory: NoSplash.splashFactory,
+                                    ),
+                                    child: SizedBox(
+                                      width: size.deviceWidth * 0.32,
+                                      child: Image.asset(
+                                          "assets/battle_masic.png"),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black38,
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    width: size.deviceWidth * 0.32,
+                                    height: 50,
+                                  ),
+                                  const Text(
+                                    "Coming soon...",
+                                    style: TextStyle(
+                                      color: Colors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -898,50 +931,83 @@ class _BattleScreenState extends State<BattleScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextButton(
-                                onPressed: buttonFlag
-                                    ? () {
-                                        print("Use the item!");
-                                        setState(() {
-                                          itemFlag = true;
-                                        });
-                                      }
-                                    : null,
-                                style: TextButton.styleFrom(
-                                  splashFactory: NoSplash.splashFactory,
-                                ),
-                                child: SizedBox(
-                                  width: size.deviceWidth * 0.32,
-                                  child: Image.asset("assets/battle_item.png"),
-                                ),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: buttonFlag
+                                        ? () {
+                                            print("Use the item!");
+                                            setState(() {
+                                              itemFlag = true;
+                                            });
+                                          }
+                                        : null,
+                                    style: TextButton.styleFrom(
+                                      splashFactory: NoSplash.splashFactory,
+                                    ),
+                                    child: SizedBox(
+                                      width: size.deviceWidth * 0.32,
+                                      child:
+                                          Image.asset("assets/battle_item.png"),
+                                    ),
+                                  ),
+                                  buttonFlag
+                                      ? Container()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black38,
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          width: size.deviceWidth * 0.32,
+                                          height: 50,
+                                        ),
+                                ],
                               ),
                               // const SizedBox(width: 15),
-                              TextButton(
-                                onPressed: buttonFlag
-                                    ? () {
-                                        print("Escape...");
-                                        showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (context) {
-                                            return Dialog(
-                                              insetPadding: EdgeInsets.zero,
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              child: EscapeDialog(),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: buttonFlag
+                                        ? () {
+                                            print("Escape...");
+                                            showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog(
+                                                  insetPadding: EdgeInsets.zero,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  child: EscapeDialog(),
+                                                );
+                                              },
                                             );
-                                          },
-                                        );
-                                      }
-                                    : null,
-                                style: TextButton.styleFrom(
-                                  splashFactory: NoSplash.splashFactory,
-                                ),
-                                child: SizedBox(
-                                  width: size.deviceWidth * 0.32,
-                                  child:
-                                      Image.asset("assets/battle_escape.png"),
-                                ),
+                                          }
+                                        : null,
+                                    style: TextButton.styleFrom(
+                                      splashFactory: NoSplash.splashFactory,
+                                    ),
+                                    child: SizedBox(
+                                      width: size.deviceWidth * 0.32,
+                                      child: Image.asset(
+                                          "assets/battle_escape.png"),
+                                    ),
+                                  ),
+                                  buttonFlag
+                                      ? Container()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black38,
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          width: size.deviceWidth * 0.32,
+                                          height: 50,
+                                        ),
+                                ],
                               ),
                             ],
                           ),
@@ -992,22 +1058,39 @@ class _BattleScreenState extends State<BattleScreen>
                                         selectedIndex = item['index'] as int;
                                       });
                                     },
-                                    child: Container(
-                                      decoration: BoxDecoration(boxShadow: [
-                                        BoxShadow(
-                                            color: selectedIndex ==
-                                                    item['index']
-                                                ? Colors.yellow.withOpacity(0.8)
-                                                : Colors.transparent,
-                                            blurRadius: 1.0,
-                                            offset: Offset(0.0, 0.5)),
-                                      ]),
-                                      margin:
-                                          EdgeInsets.only(top: 3, bottom: 3),
-                                      padding: EdgeInsets.all(5),
-                                      width: size.deviceWidth * 0.35,
-                                      child: Image.asset(
-                                          'assets/${item['imageName']}'),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(boxShadow: [
+                                            BoxShadow(
+                                                color: selectedIndex ==
+                                                        item['index']
+                                                    ? Colors.yellow
+                                                        .withOpacity(0.8)
+                                                    : Colors.transparent,
+                                                blurRadius: 1.0,
+                                                offset: Offset(0.0, 0.5)),
+                                          ]),
+                                          margin: EdgeInsets.only(
+                                              top: 3, bottom: 3),
+                                          padding: EdgeInsets.all(5),
+                                          width: size.deviceWidth * 0.35,
+                                          child: Image.asset(
+                                              'assets/${item['imageName']}'),
+                                        ),
+                                        itemCanUseFlag
+                                            ? Container()
+                                            : Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black38,
+                                                  borderRadius:
+                                                      BorderRadius.circular(7),
+                                                ),
+                                                width: size.deviceWidth * 0.32,
+                                                height: 50,
+                                              ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -1024,21 +1107,40 @@ class _BattleScreenState extends State<BattleScreen>
                             SizedBox(height: 20),
                             TextButton(
                               onPressed: () {
-                                print("使う");
-                                print(itemList[selectedIndex]);
-                                itemFlag = false;
-                                calcHealing(avatarLpWidth, avatarLp,
-                                    avatarWidthRatio, "avatar");
-                                avatarHealingController.forward();
-                                // if (itemList[selectedIndex]) {}
+                                if (itemCanUseFlag) {
+                                  print("使う");
+                                  print(itemList[selectedIndex]);
+                                  itemFlag = false;
+                                  itemCanUseFlag = false;
+                                  calcHealing(avatarLpWidth, avatarLp,
+                                      avatarWidthRatio, "avatar");
+                                  avatarHealingController.forward();
+                                  // if (itemList[selectedIndex]) {}
+                                }
                               },
                               style: TextButton.styleFrom(
                                 splashFactory: NoSplash.splashFactory,
                               ),
-                              child: SizedBox(
-                                width: size.deviceWidth * 0.25,
-                                child: Image.asset(
-                                    "assets/battle_itembutton_use.png"),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: size.deviceWidth * 0.25,
+                                    child: Image.asset(
+                                        "assets/battle_itembutton_use.png"),
+                                  ),
+                                  itemCanUseFlag
+                                      ? Container()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black38,
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          width: size.deviceWidth * 0.25,
+                                          height: 50,
+                                        ),
+                                ],
                               ),
                             ),
                             TextButton(
@@ -1087,115 +1189,115 @@ class _BattleScreenState extends State<BattleScreen>
 //   }
 // }
 
-class EnemyTwo extends StatelessWidget {
-  const EnemyTwo({
-    Key? key,
-  }) : super(key: key);
+// class EnemyTwo extends StatelessWidget {
+//   const EnemyTwo({
+//     Key? key,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/bgimage_battle2.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.orange,
-                        ),
-                        width: size.deviceHeight * 0.15,
-                        height: 18,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        width: size.deviceHeight * 0.15,
-                        child: Image.asset("assets/battle_lifepoint.png"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: size.deviceHeight * 0.3,
-                    child: Image.asset("assets/battle_enemy2.png"),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.orange,
-                        ),
-                        width: size.deviceHeight * 0.1,
-                        height: 12,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        width: size.deviceHeight * 0.1,
-                        child: Image.asset("assets/battle_lifepoint.png"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: size.deviceHeight * 0.15,
-                    child: Image.asset("assets/battle_avatar.png"),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: size.deviceHeight * 0.1),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_attack.png"),
-              ),
-              const SizedBox(width: 15),
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_masic.png"),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_item.png"),
-              ),
-              const SizedBox(width: 15),
-              SizedBox(
-                width: size.deviceWidth * 0.4,
-                child: Image.asset("assets/battle_escape.png"),
-              ),
-            ],
-          ),
-          const SizedBox(height: 40),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: const BoxDecoration(
+//         image: DecorationImage(
+//           image: AssetImage('assets/bgimage_battle2.png'),
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.end,
+//         children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             crossAxisAlignment: CrossAxisAlignment.end,
+//             children: [
+//               Column(
+//                 children: [
+//                   Stack(
+//                     children: [
+//                       Container(
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(10),
+//                           color: Colors.orange,
+//                         ),
+//                         width: size.deviceHeight * 0.15,
+//                         height: 18,
+//                       ),
+//                       Container(
+//                         margin: const EdgeInsets.only(bottom: 10),
+//                         width: size.deviceHeight * 0.15,
+//                         child: Image.asset("assets/battle_lifepoint.png"),
+//                       ),
+//                     ],
+//                   ),
+//                   SizedBox(
+//                     height: size.deviceHeight * 0.3,
+//                     child: Image.asset("assets/battle_enemy2.png"),
+//                   ),
+//                 ],
+//               ),
+//               Column(
+//                 children: [
+//                   Stack(
+//                     children: [
+//                       Container(
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(10),
+//                           color: Colors.orange,
+//                         ),
+//                         width: size.deviceHeight * 0.1,
+//                         height: 12,
+//                       ),
+//                       Container(
+//                         margin: const EdgeInsets.only(bottom: 10),
+//                         width: size.deviceHeight * 0.1,
+//                         child: Image.asset("assets/battle_lifepoint.png"),
+//                       ),
+//                     ],
+//                   ),
+//                   SizedBox(
+//                     height: size.deviceHeight * 0.15,
+//                     child: Image.asset("assets/battle_avatar.png"),
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//           SizedBox(height: size.deviceHeight * 0.1),
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               SizedBox(
+//                 width: size.deviceWidth * 0.4,
+//                 child: Image.asset("assets/battle_attack.png"),
+//               ),
+//               const SizedBox(width: 15),
+//               SizedBox(
+//                 width: size.deviceWidth * 0.4,
+//                 child: Image.asset("assets/battle_masic.png"),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 15),
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               SizedBox(
+//                 width: size.deviceWidth * 0.4,
+//                 child: Image.asset("assets/battle_item.png"),
+//               ),
+//               const SizedBox(width: 15),
+//               SizedBox(
+//                 width: size.deviceWidth * 0.4,
+//                 child: Image.asset("assets/battle_escape.png"),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 40),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class EscapeDialog extends StatefulWidget {
   EscapeDialog({Key? key}) : super(key: key);
