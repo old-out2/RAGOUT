@@ -123,10 +123,12 @@ class Food {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
-
+    final now = DateTime.now();
+    String yesterday =
+        DateFormat('yyyy/MM/dd').format(now.add(const Duration(days: 1) * -1));
     //デバッグ用 total
     Map<String, dynamic> eat = {
-      'date': "2022/02/22",
+      'date': yesterday,
       'cal': "2000",
       'protein': "90",
       'lipids': "40",
