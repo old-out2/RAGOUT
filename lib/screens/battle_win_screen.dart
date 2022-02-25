@@ -24,6 +24,8 @@ class _BattleWinScreenState extends State<BattleWinScreen> {
   bool rewardFlag = false;
   @override
   Widget build(BuildContext context) {
+    init();
+
     // return Scaffold(
     //   backgroundColor: Colors.black.withOpacity(0.5),
     // );
@@ -48,17 +50,25 @@ class _BattleWinScreenState extends State<BattleWinScreen> {
           ),
           TextButton(
             onPressed: () {
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    insetPadding: EdgeInsets.zero,
-                    backgroundColor: Colors.transparent,
-                    child: GetTitleDialog(newTitle: newtitle),
-                  );
-                },
-              );
+              if (newtitle.isNotEmpty) {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        insetPadding: EdgeInsets.zero,
+                        backgroundColor: Colors.transparent,
+                        child: GetTitleDialog(newTitle: newtitle),
+                      );
+                    });
+              } else {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const HomeScreen(title: "RAGOUT")),
+                  (_) => false,
+                );
+              }
             },
             child: Align(
               alignment: Alignment.bottomLeft,
@@ -102,7 +112,7 @@ class _GetTitleDialogState extends State<GetTitleDialog> {
               SizedBox(
                 width: size.deviceWidth * 0.6,
                 child: Text(
-                  "新しい称号\n「$widget.newTitle」\nを手に入れました！",
+                  "新しい称号\n「${widget.newTitle}」\nを手に入れました！",
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

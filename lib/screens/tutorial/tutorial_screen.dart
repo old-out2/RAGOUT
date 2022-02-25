@@ -30,6 +30,7 @@ class _TutorialState extends State<TutorialScreen> {
   void initState() {
     gendar();
     Food.insertFood();
+    Food.insert();
     super.initState();
   }
 

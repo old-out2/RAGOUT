@@ -87,12 +87,6 @@ class Food {
     String barcode = await rootBundle.loadString('json/barcode.json');
     List<dynamic> barcodeArray = jsonDecode(barcode);
 
-    String enemy = await rootBundle.loadString('json/enemy.json');
-    List<dynamic> enemyArray = jsonDecode(enemy);
-
-    String trophy = await rootBundle.loadString('json/trophy.json');
-    List<dynamic> trophyArray = jsonDecode(trophy);
-
     Map<String, dynamic> status = {
       // "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
       "power": 5,
@@ -119,21 +113,6 @@ class Food {
       );
     }
 
-    for (var item in enemyArray) {
-      await db.insert(
-        'enemy',
-        item,
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
-
-    for (var item in trophyArray) {
-      await db.insert(
-        'trophy',
-        item,
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
     final now = DateTime.now();
     String yesterday =
         DateFormat('yyyy/MM/dd').format(now.add(const Duration(days: 1) * -1));
@@ -152,6 +131,31 @@ class Food {
       eat,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  static Future<void> insert() async {
+    Database db = await database;
+    String enemy = await rootBundle.loadString('json/enemy.json');
+    List<dynamic> enemyArray = jsonDecode(enemy);
+
+    String trophy = await rootBundle.loadString('json/trophy.json');
+    List<dynamic> trophyArray = jsonDecode(trophy);
+
+    for (var item in enemyArray) {
+      await db.insert(
+        'enemy',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    for (var item in trophyArray) {
+      await db.insert(
+        'trophy',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   static Future<List<Food>> getFoods(name) async {
@@ -433,6 +437,10 @@ class trophy {
     List<Map<String, Object?>> trophyname =
         await db.rawQuery('SELECT name FROM trophy WHERE enemyid = ?', [id]);
 
-    return trophyname[0]["name"].toString();
+    print(trophyname);
+
+    String name = trophyname.isNotEmpty ? trophyname[0]["name"].toString() : "";
+
+    return name;
   }
 }

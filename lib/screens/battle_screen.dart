@@ -378,7 +378,7 @@ class _BattleScreenState extends State<BattleScreen>
                 return Dialog(
                   insetPadding: EdgeInsets.zero,
                   backgroundColor: Colors.transparent,
-                  child: BattleWinScreen(enemyId: enemyId),
+                  child: BattleWinScreen(enemyId: enemyNumber),
                 );
               },
             );
@@ -679,7 +679,7 @@ class _BattleScreenState extends State<BattleScreen>
                           ),
                         ),
                         Text(
-                          "${enemyLp.toInt()}//${enemyMaxLp.toInt()}",
+                          "${enemyLp.toInt()}/${enemyMaxLp.toInt()}",
                           style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,

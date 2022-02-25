@@ -17,12 +17,20 @@ class TrophyScreen extends StatefulWidget {
 
 class _TrophyScreenState extends State<TrophyScreen> {
   var nowTitle = "新人戦士";
+
   @override
   Widget build(BuildContext context) {
     // DBから取ってくる
-    var titles;
+
+    // List<String> titles = [];
+    init() async {
+      var titles = await trophy.getTrophy();
+      return titles;
+    }
+
+    @override
     void initState() {
-      Future(() async => titles = await trophy.getTrophy());
+      init();
     }
 
     return Center(
@@ -58,52 +66,61 @@ class _TrophyScreenState extends State<TrophyScreen> {
               ),
               SizedBox(height: size.deviceHeight * 0.01),
               Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Color.fromARGB(255, 74, 42, 3),
-                    width: 10,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Color.fromARGB(255, 74, 42, 3),
+                      width: 10,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    color: const Color.fromARGB(255, 124, 84, 36),
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color.fromARGB(255, 124, 84, 36),
-                ),
-                width: size.deviceWidth * 0.8,
-                height: size.deviceHeight * 0.45,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      for (var title in titles)
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              nowTitle = title;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                top: 20, left: 20, bottom: 0, right: 20),
-                            width: size.deviceWidth * 0.7,
-                            height: size.deviceHeight * 0.07,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 5,
-                                color: Color.fromARGB(255, 214, 189, 44),
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                              color: Color.fromARGB(255, 255, 251, 234),
-                            ),
-                            child: Center(
-                              child: Text(
-                                title,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 25),
-                              ),
-                            ),
+                  width: size.deviceWidth * 0.8,
+                  height: size.deviceHeight * 0.45,
+                  child: FutureBuilder(
+                      future: init(),
+                      builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                        List<String>? titles = snapshot.data ?? [];
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              for (var title in titles)
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      nowTitle = title;
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        bottom: 0,
+                                        right: 20),
+                                    width: size.deviceWidth * 0.7,
+                                    height: size.deviceHeight * 0.07,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 5,
+                                        color:
+                                            Color.fromARGB(255, 214, 189, 44),
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Color.fromARGB(255, 255, 251, 234),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        title,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 25),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
+                        );
+                      })),
               SizedBox(
                 height: size.deviceHeight * 0.01,
               ),
