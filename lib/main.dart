@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
           child: CheckCalDialog(
-            name: "にの",
+            name: name,
             backgroundSteps: backgroundSteps,
             nowSteps: nowSteps,
             tagetSteps: tagetSteps,
@@ -244,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
           child: GoalAchievementDialog(
-            name: "にの",
+            name: name,
             backgroundSteps: backgroundSteps,
             nowSteps: nowSteps,
           ),

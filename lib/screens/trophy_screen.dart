@@ -20,17 +20,11 @@ class _TrophyScreenState extends State<TrophyScreen> {
   @override
   Widget build(BuildContext context) {
     // DBから取ってくる
-    final titles = <String>[
-      "新人戦士",
-      "街の戦士",
-      "伝説の戦士",
-      "健康第一",
-      "ウォーカー",
-      "称号コレクター",
-      "和食マスター",
-      "洋食マスター",
-      "中華マスター",
-    ];
+    var titles;
+    void initState() {
+      Future(() async => titles = await trophy.getTrophy());
+    }
+
     return Center(
       child: Container(
         height: size.deviceHeight * 0.9,

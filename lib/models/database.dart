@@ -411,19 +411,28 @@ class trophy {
     return _database;
   }
 
-  static Future<List<Map<String, dynamic>>> gettrophy() async {
+  static Future<List<String>> getTrophy() async {
     Database db = await database;
 
     List<Map<String, dynamic>> maps =
-        await db.rawQuery('SELECT name FROM enemy WHERE permission = 1');
+        await db.rawQuery('SELECT name FROM trophy WHERE permission = 1');
 
-    return maps;
+    return List.generate(maps.length, (index) => maps[index]["name"]);
   }
 
-  static updateEnemy(String name) async {
+  static updateTrophy(int id) async {
     Database db = await database;
 
     await db
-        .rawUpdate('UPDATE enemy SET permission = 1 WHERE name = ?', [name]);
+        .rawUpdate('UPDATE trophy SET permission = 1 WHERE enemyid = ?', [id]);
+  }
+
+  static Future<String> getNewTrophy(int id) async {
+    Database db = await database;
+
+    List<Map<String, Object?>> trophyname =
+        await db.rawQuery('SELECT name FROM trophy WHERE enemyid = ?', [id]);
+
+    return trophyname[0]["name"].toString();
   }
 }
