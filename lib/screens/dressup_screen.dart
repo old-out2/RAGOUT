@@ -46,7 +46,7 @@ class ShoesClotheData {
 
 final tops = <String>[
   "dressup_clothe14.png",
-  "dressup_clothe1.png",
+  // "dressup_clothe1.png",
   "dressup_clothe2.png",
   "dressup_clothe5.png",
   "dressup_clothe6.png",
@@ -58,7 +58,7 @@ final outers = <String>[
 ];
 final bottoms = <String>[
   "dressup_clothe13.png",
-  "dressup_clothe10.png",
+  // "dressup_clothe10.png",
   "dressup_clothe9.png",
 ];
 final shoes = <String>[
@@ -105,6 +105,12 @@ class _DressupScreenState extends State<DressupScreen> {
   Widget build(BuildContext context) {
     size.init(context);
     return Scaffold(
+      appBar: AppBar(
+        // AppBarを隠す
+        backgroundColor: Color.fromRGBO(242, 242, 242, 1.0),
+        elevation: 0.0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -155,13 +161,13 @@ class _DressupScreenState extends State<DressupScreen> {
                           Center(
                             child: Container(
                               margin: EdgeInsets.only(
-                                  top: (_selectedTopsIndex == 4) ? 133 : 148, //
+                                  top: (_selectedTopsIndex == 3) ? 133 : 148, //
                                   left: 5,
                                   bottom: 0,
                                   right: 5),
                               // color: Colors.black.withOpacity(0.3),
-                              width: (_selectedTopsIndex == 4) ? 80 : 70,
-                              height: (_selectedTopsIndex == 4) ? 100 : 70,
+                              width: (_selectedTopsIndex == 3) ? 80 : 70,
+                              height: (_selectedTopsIndex == 3) ? 100 : 70,
                               child: Image.asset(
                                   "assets/${topsClothes[_selectedTopsIndex].topsClothe}"),
                             ),
@@ -249,9 +255,9 @@ class _DressupScreenState extends State<DressupScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 15),
-            const DressupSubmitButton(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 80),
+            // const DressupSubmitButton(),
+            // const SizedBox(height: 20),
           ],
         ),
       ),

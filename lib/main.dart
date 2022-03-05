@@ -189,6 +189,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (tagetSteps - nowSteps <= 0 && achievementFlag == false) {
         // 目標達成処理
         showGoalAchievementDialog(nowSteps, backgroundSteps, defaultKcal);
+        setState(() {
+          achievementFlag = true;
+        });
       } else if (backgroundSteps > 0) {
         // バックグラウンド起動中にどれだけ歩いたか表示
         showStepsDialog(nowSteps, backgroundSteps, defaultKcal, tagetSteps);
@@ -235,7 +238,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void showGoalAchievementDialog(
       int nowSteps, int backgroundSteps, int defaultKcal) {
     print("run showGoalAchievement");
-    achievementFlag = true;
     showDialog(
       barrierDismissible: false,
       context: context,

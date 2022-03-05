@@ -43,6 +43,12 @@ class _StatusScreenState extends State<StatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // AppBarを隠す
+        backgroundColor: Color.fromRGBO(242, 242, 242, 1.0),
+        elevation: 0.0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
